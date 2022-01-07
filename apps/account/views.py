@@ -1,27 +1,28 @@
-from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.account.utils import authenticate_mospolytech
+from apps.account.utils import MospolytechParser
+from apps.telegram.serializers import TelegramUserSerializer
 from .models import MospolytechUser
 from .serializers import MospolytechUserSerializer
+from ..telegram.models import TelegramUser
 
 
 class LoginToMospolytech(APIView):
     def post(self, request, *args, **kwargs):
         login = request.data.get('login')
         password = request.data.get('password')
-        telegram_id = request.data.get('telegram_id')
+        telegram = request.data.get('telegram')
 
-        if not (login or password or telegram_id):
-            raise ValidationError({'message': 'The request body must contain login, password, telegram_id'})
+        token = MospolytechParser.authenticate_mospolytech(login=login, password=password)
 
-        authenticate_mospolytech(login=login, password=password)
+        serializer = TelegramUserSerializer(
+            instance=TelegramUser.objects.get_or_none(telegram_id=telegram['telegram_id']), data=telegram)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
-        user, created = MospolytechUser.objects.update_or_create(login=login, password=password,
-                                                                 telegram_id=telegram_id)
+        user, _ = MospolytechUser.objects.update_or_create(login=login, defaults={'password': password,
+                                                                                  'telegram_user': serializer.instance,
+                                                                                  'cached_token': token})
 
-        serializer = MospolytechUserSerializer(user)
-        status_code = 201 if created else 200
-
-        return Response(serializer.data, status=status_code)
+        return Response(MospolytechUserSerializer(user).data, status=201)

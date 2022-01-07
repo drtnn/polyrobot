@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'apps.core',
     'apps.account',
+    'apps.telegram',
+    'apps.schedule',
 ]
 
 MIDDLEWARE = [
