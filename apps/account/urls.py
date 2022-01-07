@@ -1,8 +1,7 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 
-from . import views
+from .rest_api import MospolytechUserViewSet
 
-app_name = 'account'
-urlpatterns = [
-    path('login-to-mospolytech/', views.LoginToMospolytech.as_view(), name='login-to-mospolytech'),
-]
+router = DefaultRouter()
+router.register(r'users', MospolytechUserViewSet, basename='user')
+urlpatterns = router.urls
