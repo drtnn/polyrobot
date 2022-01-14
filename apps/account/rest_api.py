@@ -6,7 +6,9 @@ from apps.account.utils import MospolytechParser
 from apps.telegram.serializers import TelegramUserSerializer
 from .models import MospolytechUser
 from .serializers import MospolytechUserSerializer
-from ..telegram.models import TelegramUser
+from apps.telegram.models import TelegramUser
+
+from rest_framework.exceptions import ValidationError
 
 
 class MospolytechUserViewSet(mixins.ListModelMixin,
@@ -19,20 +21,19 @@ class MospolytechUserViewSet(mixins.ListModelMixin,
     def login_to_mospolytech(self, request, *args, **kwargs):
         login = request.data.get('login')
         password = request.data.get('password')
-        telegram = request.data.get('telegram')
+        telegram_id = request.data.get('telegram_id')
+
+        if not (login or password or telegram_id):
+            raise ValidationError(detail='Login, password and telegram_id would be passed')
 
         token = MospolytechParser.authenticate_mospolytech(login=login, password=password)
 
-        serializer = TelegramUserSerializer(
-            instance=TelegramUser.objects.get_or_none(telegram_id=telegram['telegram_id']), data=telegram)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        user, created = MospolytechUser.objects.update_or_create(telegram_user__id=telegram_id, defaults={
+            'login': login,
+            'password': password,
+            'cached_token': token})
 
-        user, _ = MospolytechUser.objects.update_or_create(login=login, defaults={'password': password,
-                                                                                  'telegram_user': serializer.instance,
-                                                                                  'cached_token': token})
-
-        return Response(MospolytechUserSerializer(user).data, status=201)
+        return Response(MospolytechUserSerializer(user).data, status=201 if created else 200)
 
     @action(detail=True, methods=['GET'], url_path='schedule')
     def schedule(self, request, *args, **kwargs):

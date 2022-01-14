@@ -7,6 +7,16 @@ from django.contrib.auth.models import User
 class BaseModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
 
+    class GetOrNoneManager(models.Manager):
+        """Adds get_or_none method to objects
+        """
+
+        def get_or_none(self, **kwargs):
+            try:
+                return self.get(**kwargs)
+            except self.model.DoesNotExist:
+                return None
+
     class Meta:
         abstract = True
 
