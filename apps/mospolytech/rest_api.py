@@ -2,7 +2,7 @@ from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from apps.account.utils import MospolytechParser
+from apps.mospolytech.utils import MospolytechParser
 from apps.telegram.serializers import TelegramUserSerializer
 from .models import MospolytechUser
 from .serializers import MospolytechUserSerializer
@@ -21,19 +21,19 @@ class MospolytechUserViewSet(mixins.ListModelMixin,
     def login_to_mospolytech(self, request, *args, **kwargs):
         login = request.data.get('login')
         password = request.data.get('password')
-        telegram_id = request.data.get('telegram_id')
+        telegram = request.data.get('telegram')
 
-        if not (login or password or telegram_id):
-            raise ValidationError(detail='Login, password and telegram_id would be passed')
+        if not (login or password or telegram):
+            raise ValidationError(detail='Login, password and telegram_id must be passed')
 
         token = MospolytechParser.authenticate_mospolytech(login=login, password=password)
 
-        user, created = MospolytechUser.objects.update_or_create(telegram_user__id=telegram_id, defaults={
-            'login': login,
-            'password': password,
-            'cached_token': token})
+        user = MospolytechUser.objects.get_or_none(telegram=telegram)
+        serializer = MospolytechUserSerializer(instance=user, data=request.data | {'cached_token': token})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
-        return Response(MospolytechUserSerializer(user).data, status=201 if created else 200)
+        return Response(serializer.data, status=200)
 
     @action(detail=True, methods=['GET'], url_path='schedule')
     def schedule(self, request, *args, **kwargs):

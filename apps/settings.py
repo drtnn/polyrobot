@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'apps.core',
-    'apps.account',
+    'apps.mospolytech',
     'apps.telegram',
     'apps.schedule',
 ]
