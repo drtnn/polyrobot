@@ -40,6 +40,11 @@ class MospolytechUserViewSet(mixins.ListModelMixin,
         user = self.get_object()
         return Response(user.schedule, status=200)
 
+    @action(detail=True, methods=['GET'], url_path='session-schedule')
+    def session_schedule(self, request, *args, **kwargs):
+        user = self.get_object()
+        return Response(user.session_schedule, status=200)
+
     @action(detail=True, methods=['GET'], url_path='information')
     def information(self, request, *args, **kwargs):
         user = self.get_object()

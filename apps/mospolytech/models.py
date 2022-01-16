@@ -27,6 +27,10 @@ class MospolytechUser(Timestampable):
         return MospolytechParser.get_data_from_mospolytech(self, MospolytechParser.SCHEDULE)
 
     @cached_property
+    def session_schedule(self) -> dict:
+        return MospolytechParser.get_data_from_mospolytech(self, MospolytechParser.SCHEDULE, session=1)
+
+    @cached_property
     def payments(self) -> dict:
         return MospolytechParser.get_data_from_mospolytech(self, MospolytechParser.PAYMENTS)
 
