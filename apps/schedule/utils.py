@@ -1,12 +1,11 @@
 import re
 from datetime import datetime
+from typing import Union, Dict, List
 
 from rest_framework.exceptions import ValidationError
 
-from apps.mospolytech.models import MospolytechUser, Group, Student
+from apps.mospolytech.models import Group, Student
 from apps.schedule.models import ScheduledLesson, Lesson, LessonPlace, LessonTeacher, LessonType, LessonRoom
-
-from typing import Union, Dict, List
 
 SLEEP_TIME = 60 * 60
 
@@ -29,6 +28,7 @@ def save_lesson_place(lesson: dict):
 
 def save_schedule(group: Group, schedule: Union[Dict, List]):
     if schedule and isinstance(schedule, dict):
+        scheduled_lessons = []
         for date, lessons in schedule.items():
             lessons_list = lessons['lessons']
 
@@ -47,15 +47,24 @@ def save_schedule(group: Group, schedule: Union[Dict, List]):
                 if not lesson_object:
                     lesson_object = Lesson.objects.create(title=title, group=group, type=lesson_type,
                                                           place=lesson_place)
-                    for lesson_teacher in lesson_teachers:
-                        lesson_object.teachers.add(lesson_teacher)
+                    lesson_object.teachers.add(*lesson_teachers)
 
-            if re.fullmatch(r'\d{4}-\d\d-\d\d', date):
-                # Not repeated lessons
-                pass
-            else:
-                # Repeated lessons
-                pass
+                if re.fullmatch(r'\d{4}-\d\d-\d\d', date):
+                    # Not repeated lessons
+                    raw_datetime = f'{date} {lesson["timeInterval"].split(" - ")[0].replace(" ", "")}'
+                    datetime_object = datetime.strptime(raw_datetime, '%Y-%m-%d %H:%M')
+                    if datetime_object >= datetime.now():
+                        scheduled_lessons.append(ScheduledLesson(lesson=lesson_object, datetime=datetime_object))
+                else:
+                    # Repeated lessons
+                    pass
+
+        ScheduledLesson.objects.bulk_create(scheduled_lessons)
+        Lesson.objects.filter(scheduledlesson__isnull=True).delete()
+        LessonPlace.objects.filter(lesson__isnull=True).delete()
+        LessonType.objects.filter(lesson__isnull=True).delete()
+        LessonTeacher.objects.filter(lessons__isnull=True).delete()
+        LessonRoom.objects.filter(lessons__isnull=True).delete()
 
 
 def update_schedule():
