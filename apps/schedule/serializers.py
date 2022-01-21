@@ -1,21 +1,47 @@
 from rest_framework import serializers
 
-from .models import Lesson, ScheduledLesson, LessonPlace
+from .models import Lesson, ScheduledLesson, LessonPlace, LessonRoom, LessonTeacher, LessonType
+
+
+class LessonRoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LessonRoom
+        fields = ['id', 'number']
 
 
 class LessonPlaceSerializer(serializers.ModelSerializer):
+    rooms = LessonRoomSerializer(many=True)
+
     class Meta:
         model = LessonPlace
-        fields = ['id', 'title', 'link']
+        fields = ['title', 'link', 'rooms']
 
 
-class LessonSerializer(serializers.ModelSerializer):
+class LessonTeacherSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LessonTeacher
+        fields = ['full_name']
+
+
+class LessonTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LessonType
+        fields = ['title']
+
+
+class LessonReadSerializer(serializers.ModelSerializer):
+    type = serializers.CharField(source='type.title')
+    place = LessonPlaceSerializer()
+    teachers = LessonTeacherSerializer(many=True)
+
     class Meta:
         model = Lesson
-        fields = ['id', 'title', 'type', 'places', 'teachers']
+        fields = ['title', 'type', 'place', 'teachers']
 
 
-class ScheduledLessonSerializer(serializers.ModelSerializer):
+class ScheduledLessonReadSerializer(serializers.ModelSerializer):
+    lesson = LessonReadSerializer()
+
     class Meta:
         model = ScheduledLesson
         fields = ['id', 'lesson', 'datetime']

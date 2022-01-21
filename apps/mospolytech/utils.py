@@ -11,6 +11,7 @@ class MospolytechParser:
     USER = 'User'
     SCHEDULE = 'Schedule'
     PAYMENTS = 'Payments'
+    ACADEMIC_PERFORMANCE = 'AcademicPerformance'
 
     @staticmethod
     def authenticate_mospolytech(login: str, password: str):

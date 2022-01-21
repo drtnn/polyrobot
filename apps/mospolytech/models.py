@@ -1,16 +1,22 @@
 from django.db import models
-from django.utils.functional import cached_property
+from django.db.models import QuerySet
 
-from apps.mospolytech.utils import MospolytechParser
 from apps.core.models import BaseModel, Timestampable
-
+from apps.mospolytech.utils import MospolytechParser
 
 # TODO: Шифровать поле password
+from apps.schedule.models import ScheduledLesson
+
+
 class MospolytechUser(Timestampable):
     login = models.CharField(verbose_name='Mospolytech Login', max_length=32)
     password = models.CharField(verbose_name='Mospolytech Password', max_length=32)
     telegram = models.OneToOneField('telegram.TelegramUser', verbose_name='Telegram User', on_delete=models.CASCADE)
     cached_token = models.TextField(verbose_name='Cached Mospolytech Token')
+
+    @property
+    def scheduled_lessons(self) -> QuerySet:
+        return ScheduledLesson.objects.filter(lesson__group=self.student.group)
 
     def token(self, cached=True) -> str:
         if not cached:
@@ -18,21 +24,18 @@ class MospolytechUser(Timestampable):
             self.save()
         return self.cached_token
 
-    @cached_property
     def information(self) -> dict:
         return MospolytechParser.get_data_from_mospolytech(self, MospolytechParser.USER)
 
-    @cached_property
-    def schedule(self) -> dict:
-        return MospolytechParser.get_data_from_mospolytech(self, MospolytechParser.SCHEDULE)
+    def schedule(self, is_session: bool = False) -> dict:
+        return MospolytechParser.get_data_from_mospolytech(self, MospolytechParser.SCHEDULE, session=int(is_session))
 
-    @cached_property
-    def session_schedule(self) -> dict:
-        return MospolytechParser.get_data_from_mospolytech(self, MospolytechParser.SCHEDULE, session=1)
-
-    @cached_property
     def payments(self) -> dict:
         return MospolytechParser.get_data_from_mospolytech(self, MospolytechParser.PAYMENTS)
+
+    def academic_performance(self, semester_number: int = None) -> dict:
+        kwargs = {'semestr': semester_number} if semester_number else {}
+        return MospolytechParser.get_data_from_mospolytech(self, MospolytechParser.ACADEMIC_PERFORMANCE, **kwargs)
 
 
 class Group(BaseModel):

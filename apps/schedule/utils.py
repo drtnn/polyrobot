@@ -57,6 +57,7 @@ def save_schedule(group: Group, schedule: Union[Dict, List]):
                         scheduled_lessons.append(ScheduledLesson(lesson=lesson_object, datetime=datetime_object))
                 else:
                     # Repeated lessons
+                    # TODO: Реализовать функционал сохранения семестрового расписания
                     pass
 
         ScheduledLesson.objects.bulk_create(scheduled_lessons)
@@ -82,8 +83,8 @@ def update_schedule():
     for group_number, group in groups.items():
         for actual_user in group_users.pop(group_number):
             try:
-                schedule = actual_user.schedule
-                session_schedule = actual_user.session_schedule
+                schedule = actual_user.schedule(is_session=False)
+                session_schedule = actual_user.schedule(is_session=True)
             except ValidationError:
                 continue
             else:

@@ -6,7 +6,7 @@ from .models import MospolytechUser, Student, Group, PersonalData
 
 @receiver([post_save], sender=MospolytechUser)
 def save_mospolytech_user(sender, instance: MospolytechUser, **kwargs):
-    user = instance.information['user']
+    user = instance.information()['user']
     if user['user_status'] == 'stud':
         group, _ = Group.objects.get_or_create(number=user['group'])
 
