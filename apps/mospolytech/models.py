@@ -11,7 +11,8 @@ from apps.schedule.models import ScheduledLesson
 class MospolytechUser(Timestampable):
     login = models.CharField(verbose_name='Mospolytech Login', max_length=32)
     password = models.CharField(verbose_name='Mospolytech Password', max_length=32)
-    telegram = models.OneToOneField('telegram.TelegramUser', verbose_name='Telegram User', on_delete=models.CASCADE)
+    telegram = models.OneToOneField('telegram.TelegramUser', verbose_name='Telegram User',
+                                    related_name='mospolytech_user', on_delete=models.CASCADE)
     cached_token = models.TextField(verbose_name='Cached Mospolytech Token')
 
     @property
