@@ -16,7 +16,7 @@ class GetOrNoneManager(models.Manager):
 
 
 class BaseModel(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     objects = GetOrNoneManager()
 

@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+  minio:
+    image: docker.io/bitnami/minio:2022
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    environment:
+      - MINIO_ACCESS_KEY=minio-access-key
+      - MINIO_SECRET_KEY=minio-secret-key
+    volumes:
+      - 'minio_data:/data'
+
+volumes:
+  minio_data:
+    driver: local
