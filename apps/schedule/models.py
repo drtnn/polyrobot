@@ -25,10 +25,18 @@ class Lesson(BaseModel):
     title = models.CharField(verbose_name='Lesson Title', max_length=64)
     group = models.ForeignKey('mospolytech.Group', verbose_name='Group', on_delete=models.CASCADE)
     type = models.ForeignKey('schedule.LessonType', verbose_name='Lesson Type', on_delete=models.CASCADE)
-    place = models.ForeignKey('schedule.LessonPlace', verbose_name='Lesson Places', on_delete=models.CASCADE)
+    place = models.ForeignKey('schedule.LessonPlace', verbose_name='Lesson Place', on_delete=models.CASCADE)
     teachers = models.ManyToManyField('schedule.LessonTeacher', verbose_name='Lesson Teachers', related_name='lessons')
 
 
 class ScheduledLesson(BaseModel):
     lesson = models.ForeignKey('schedule.Lesson', verbose_name='Lesson', on_delete=models.CASCADE)
     datetime = models.DateTimeField(verbose_name='Lesson DateTime')
+
+
+class ScheduledLessonNote(BaseModel):
+    scheduled_lesson = models.ForeignKey('schedule.ScheduledLesson', verbose_name='Scheduled Lesson',
+                                         on_delete=models.CASCADE)
+    text = models.TextField(verbose_name='Scheduled Lesson Note Text', max_length=4096, blank=True, null=True)
+    files = models.ManyToManyField('s3.File', verbose_name='Scheduled Lesson Note Files',
+                                   related_name='scheduled_lesson_notes')

@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from apps.telegram.models import TelegramUser
 from apps.telegram.serializers import TelegramUserSerializer
-from ..schedule.serializers import ScheduledLessonReadSerializer
+from apps.schedule.serializers import ScheduledLessonSerializer
 
 
 class TelegramUserViewSet(viewsets.ModelViewSet):
@@ -66,6 +66,6 @@ class TelegramUserViewSet(viewsets.ModelViewSet):
                 scheduled_lessons = user.scheduled_lessons.filter(datetime__gte=date_from)
             if date_to:
                 scheduled_lessons = user.scheduled_lessons.filter(datetime__lte=date_to)
-        serializer = ScheduledLessonReadSerializer(scheduled_lessons, many=True)
+        serializer = ScheduledLessonSerializer(scheduled_lessons, many=True)
 
         return Response(serializer.data, status=200)

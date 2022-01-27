@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
-from .models import Lesson, ScheduledLesson, LessonPlace, LessonRoom, LessonTeacher, LessonType
+from .models import Lesson, ScheduledLesson, LessonPlace, LessonRoom, LessonTeacher, LessonType, ScheduledLessonNote
+from apps.s3.serializers import FileSerializer
+from ..s3.models import File
 
 
 class LessonRoomSerializer(serializers.ModelSerializer):
@@ -39,9 +41,25 @@ class LessonReadSerializer(serializers.ModelSerializer):
         fields = ['title', 'type', 'place', 'teachers']
 
 
-class ScheduledLessonReadSerializer(serializers.ModelSerializer):
+class ScheduledLessonSerializer(serializers.ModelSerializer):
     lesson = LessonReadSerializer()
 
     class Meta:
         model = ScheduledLesson
         fields = ['id', 'lesson', 'datetime']
+
+
+class ScheduledLessonNoteReadSerializer(serializers.ModelSerializer):
+    files = FileSerializer(many=True, required=False)
+
+    class Meta:
+        model = ScheduledLessonNote
+        fields = ['id', 'scheduled_lesson', 'text', 'files']
+
+
+class ScheduledLessonNoteWriteSerializer(serializers.ModelSerializer):
+    files = serializers.PrimaryKeyRelatedField(many=True, queryset=File.objects.all())
+
+    class Meta:
+        model = ScheduledLessonNote
+        fields = ['id', 'scheduled_lesson', 'text', 'files']
