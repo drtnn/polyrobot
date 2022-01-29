@@ -1,8 +1,12 @@
+from datetime import datetime
+
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from apps.mospolytech.models import Group
+from apps.s3.models import File
 from apps.schedule.models import ScheduledLesson, ScheduledLessonNote
 from apps.schedule.serializers import ScheduledLessonSerializer, ScheduledLessonNoteReadSerializer, \
     ScheduledLessonNoteWriteSerializer
@@ -12,7 +16,7 @@ class ScheduledLessonViewSet(mixins.ListModelMixin,
                              mixins.RetrieveModelMixin,
                              viewsets.GenericViewSet):
     serializer_class = ScheduledLessonSerializer
-    queryset = ScheduledLesson.objects.all()
+    queryset = ScheduledLesson.objects.all().order_by('datetime')
 
     def get_queryset(self):
         qs = self.queryset
@@ -23,6 +27,8 @@ class ScheduledLessonViewSet(mixins.ListModelMixin,
         if 'telegram_pk' in self.kwargs:
             group = Group.objects.get(student__user__telegram_id=self.kwargs['telegram_pk'])
             qs = qs.filter(lesson__group=group)
+
+        date = datetime.today().date() if date == 'today' else date
 
         if date:
             qs = qs.filter(datetime__contains=date)
@@ -58,3 +64,15 @@ class ScheduledLessonNoteViewSet(viewsets.ModelViewSet):
         if 'scheduled_lesson_pk' in self.kwargs:
             qs = qs.filter(scheduled_lesson__id=self.kwargs['scheduled_lesson_pk'])
         return qs
+
+    @action(detail=True, methods=['POST'], url_path='add-file')
+    def add_note(self, request, *args, **kwargs):
+        note = self.get_object()
+        files = request.data.get('files')
+
+        if not isinstance(files, list):
+            raise ValidationError({'error': '`files` is not valid'})
+        note.files.add(File.objects.filter(id__in=files))
+
+        serializer = ScheduledLessonNoteReadSerializer(instance=note)
+        return Response(serializer.data, status=200)

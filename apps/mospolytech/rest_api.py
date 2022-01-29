@@ -21,7 +21,7 @@ class MospolytechUserViewSet(mixins.ListModelMixin,
         telegram = request.data.get('telegram')
 
         if not (login or password or telegram):
-            raise ValidationError(detail='Login, password and telegram_id must be passed')
+            raise ValidationError({'error': 'Login, password and telegram_id must be passed'})
 
         token = MospolytechParser.authenticate_mospolytech(login=login, password=password)
 

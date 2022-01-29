@@ -25,7 +25,7 @@ class MospolytechParser:
         try:
             token = response.json()['token']
         except (KeyError, JSONDecodeError):
-            raise ValidationError({'message': 'Invalid login or password'})
+            raise ValidationError({'error': 'Invalid login or password'})
         else:
             return token
 
@@ -42,6 +42,6 @@ class MospolytechParser:
         try:
             response_data = response.json()
         except JSONDecodeError:
-            raise ValidationError({'message': f'Can not get {key.lower()} information from Mospolytech'})
+            raise ValidationError({'error': f'Can not get {key.lower()} information from Mospolytech'})
         else:
             return response_data

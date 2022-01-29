@@ -14,10 +14,6 @@ class MospolytechUser(Timestampable):
     telegram = models.OneToOneField('telegram.TelegramUser', verbose_name='Telegram User', on_delete=models.CASCADE)
     cached_token = models.TextField(verbose_name='Cached Mospolytech Token')
 
-    @property
-    def scheduled_lessons(self) -> QuerySet:
-        return ScheduledLesson.objects.filter(lesson__group=self.student.group)
-
     def token(self, cached=True) -> str:
         if not cached:
             self.cached_token = MospolytechParser.authenticate_mospolytech(self.login, self.password)
