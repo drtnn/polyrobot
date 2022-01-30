@@ -140,7 +140,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-locale.setlocale(locale.LC_TIME, 'ru_RU.UTF-8')
+locale.setlocale(locale.LC_TIME, os.getenv('LC_CTYPE', 'ru_RU.UTF-8'))
 
 # Amazon S3
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html
