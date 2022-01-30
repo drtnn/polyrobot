@@ -1,6 +1,7 @@
 from rest_framework import viewsets, mixins
-from rest_framework.decorators import action
+from rest_framework.decorators import action, permission_classes
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from apps.mospolytech.utils import MospolytechParser
@@ -14,7 +15,7 @@ class MospolytechUserViewSet(mixins.ListModelMixin,
     queryset = MospolytechUser.objects.all()
     serializer_class = MospolytechUserSerializer
 
-    @action(detail=False, methods=['POST'], url_path='login-to-mospolytech')
+    @action(detail=False, methods=['POST'], url_path='login-to-mospolytech', permission_classes=[AllowAny])
     def login_to_mospolytech(self, request, *args, **kwargs):
         login = request.data.get('login')
         password = request.data.get('password')
@@ -26,7 +27,12 @@ class MospolytechUserViewSet(mixins.ListModelMixin,
         token = MospolytechParser.authenticate_mospolytech(login=login, password=password)
 
         user = MospolytechUser.objects.get_or_none(telegram=telegram)
-        serializer = MospolytechUserSerializer(instance=user, data=request.data | {'cached_token': token})
+        serializer = MospolytechUserSerializer(instance=user, data={
+            'login': login,
+            'password': password,
+            'telegram': telegram,
+            'cached_token': token
+        })
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
