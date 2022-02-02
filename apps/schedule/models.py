@@ -28,7 +28,7 @@ class LessonPlace(BaseModel):
 
     @property
     def rooms_str(self):
-        return ' '.join([room.number for room in self.rooms.all()]) if self.rooms.all() else None
+        return ', '.join([room.number for room in self.rooms.all()]) if self.rooms.all() else None
 
 
 class LessonTeacher(BaseModel):
@@ -69,7 +69,7 @@ class Lesson(BaseModel):
 
     @property
     def teachers_str(self):
-        return ' '.join([teacher.full_name for teacher in self.teachers.all()]) if self.teachers.all() else None
+        return ', '.join([teacher.full_name for teacher in self.teachers.all()]) if self.teachers.all() else None
 
 
 class ScheduledLesson(BaseModel):

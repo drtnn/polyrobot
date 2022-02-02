@@ -94,7 +94,7 @@ class Teacher(BaseModel):
 
     @property
     def groups_str(self):
-        return ' '.join([group.number for group in self.groups.all()]) if self.groups.all() else None
+        return ', '.join([group.number for group in self.groups.all()]) if self.groups.all() else None
 
     def __str__(self):
         return str(self.user)
