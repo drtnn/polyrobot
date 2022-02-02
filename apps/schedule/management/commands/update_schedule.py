@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 
 from apps.schedule.utils import update_schedule
 
-SLEEP_TIME = 60 * 60
+SLEEP_TIME = 60 * 60 * 12
 
 
 class Command(BaseCommand):
