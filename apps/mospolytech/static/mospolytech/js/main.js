@@ -4,7 +4,6 @@
     let input = $('.validate-input .input100');
     const pathname = window.location.pathname.split('/');
     const telegram = pathname[pathname.indexOf("login-to-mospolytech") + 1];
-    console.log(telegram);
 
     $('.login100-form-btn').bind("click", function () {
         let check = true;
@@ -59,6 +58,4 @@
 
         $(thisAlert).removeClass('alert-validate');
     }
-
-
 })(jQuery);

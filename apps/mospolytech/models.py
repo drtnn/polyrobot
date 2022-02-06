@@ -1,15 +1,14 @@
 from django.db import models
+from encrypted_model_fields.fields import EncryptedCharField
 
 from apps.core.models import BaseModel, Timestampable
 from apps.mospolytech.utils import MospolytechParser
-
-# TODO: Шифровать поле password
 from apps.schedule.models import ScheduledLesson
 
 
 class MospolytechUser(Timestampable):
     login = models.CharField(verbose_name='Mospolytech Login', max_length=32)
-    password = models.CharField(verbose_name='Mospolytech Password', max_length=32)
+    password = EncryptedCharField(verbose_name='Mospolytech Password', max_length=128)
     telegram = models.OneToOneField('telegram.TelegramUser', verbose_name='Telegram User', on_delete=models.CASCADE)
     cached_token = models.TextField(verbose_name='Cached Mospolytech Token')
 

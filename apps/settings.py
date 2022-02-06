@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'encrypted_model_fields',
     'rest_framework',
     'rest_framework.authtoken',
     'storages',
@@ -171,5 +172,7 @@ PRIVATE_FILE_STORAGE = 'apps.core.storage_backends.PrivateMediaStorage'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+FIELD_ENCRYPTION_KEY = os.environ.get('FIELD_ENCRYPTION_KEY', '')
 
 E_MOSPOLYTECH_ENDPOINT = os.getenv('MOSPOLYTECH_ACCOUNT_ENDPOINT', 'https://e.mospolytech.ru')
