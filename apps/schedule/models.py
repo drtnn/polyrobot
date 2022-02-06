@@ -85,10 +85,10 @@ class ScheduledLesson(BaseModel):
 
 
 class ScheduledLessonNote(BaseModel):
-    scheduled_lesson = models.ForeignKey('schedule.ScheduledLesson', verbose_name='Scheduled Lesson',
-                                         on_delete=models.CASCADE)
-    text = models.TextField(verbose_name='Scheduled Lesson Note Text', max_length=4096, blank=True, null=True)
-    files = models.ManyToManyField('s3.File', verbose_name='Scheduled Lesson Note Files',
+    lesson = models.ForeignKey('schedule.Lesson', verbose_name='Lesson', on_delete=models.CASCADE)
+    datetime = models.DateTimeField(verbose_name='Lesson DateTime')
+    text = models.TextField(verbose_name='Lesson Note Text', max_length=4096, blank=True, null=True)
+    files = models.ManyToManyField('s3.File', verbose_name='Lesson Note Files',
                                    related_name='scheduled_lesson_notes')
 
     class Meta:
@@ -96,7 +96,7 @@ class ScheduledLessonNote(BaseModel):
         verbose_name_plural = 'Заметки к запланированным занятиям'
 
     def __str__(self):
-        return str(self.scheduled_lesson)
+        return str(self.lesson)
 
     @property
     def files_count(self):

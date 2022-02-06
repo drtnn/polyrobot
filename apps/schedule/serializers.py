@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from .models import Lesson, ScheduledLesson, LessonPlace, LessonRoom, LessonTeacher, LessonType, ScheduledLessonNote
 from apps.s3.serializers import FileSerializer
@@ -54,12 +55,32 @@ class ScheduledLessonNoteReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ScheduledLessonNote
-        fields = ['id', 'scheduled_lesson', 'text', 'files']
+        fields = ['id', 'lesson', 'datetime', 'text', 'files']
 
 
 class ScheduledLessonNoteWriteSerializer(serializers.ModelSerializer):
-    files = serializers.PrimaryKeyRelatedField(many=True, queryset=File.objects.all())
+    files = serializers.PrimaryKeyRelatedField(many=True, queryset=File.objects.all(), required=False)
 
     class Meta:
         model = ScheduledLessonNote
-        fields = ['id', 'scheduled_lesson', 'text', 'files']
+        fields = ['id', 'lesson', 'datetime', 'text', 'files']
+
+
+class ScheduledLessonAddNoteSerializer(serializers.ModelSerializer):
+    scheduled_lesson = serializers.PrimaryKeyRelatedField(queryset=ScheduledLesson.objects.all())
+    files = serializers.PrimaryKeyRelatedField(many=True, queryset=File.objects.all(), required=False)
+
+    class Meta:
+        model = ScheduledLessonNote
+        fields = ['scheduled_lesson', 'text', 'files']
+
+    def create(self, validated_data):
+        scheduled_lesson = validated_data.pop('scheduled_lesson')
+        validated_data['lesson'], validated_data['datetime'] = scheduled_lesson.lesson, scheduled_lesson.datetime
+        return super(ScheduledLessonAddNoteSerializer, self).create(validated_data=validated_data)
+
+    def update(self, instance, validated_data):
+        if validated_data.get('scheduled_lesson'):
+            scheduled_lesson = validated_data.pop('scheduled_lesson')
+            validated_data['lesson'], validated_data['datetime'] = scheduled_lesson.lesson, scheduled_lesson.datetime
+        return super(ScheduledLessonAddNoteSerializer, self).update(instance=instance, validated_data=validated_data)
