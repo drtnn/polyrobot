@@ -6,13 +6,17 @@ from typing import Union, Dict, List
 from rest_framework.exceptions import ValidationError
 
 from apps.mospolytech.models import Group, Student
-from apps.schedule.constants import WEEKDAYS
+from apps.schedule.constants import WEEKDAYS, RU_MONTHS_TO_EN
 from apps.schedule.models import ScheduledLesson, Lesson, LessonPlace, LessonTeacher, LessonType, LessonRoom
 
-SLEEP_TIME = 60 * 60
+
+def change_month_on_en(raw_datetime):
+    month = raw_datetime.split(' ')[1]
+    return raw_datetime.replace(month, RU_MONTHS_TO_EN[month])
 
 
 def get_nearest_date(raw_date: str) -> datetime.date:
+    raw_date = change_month_on_en(raw_date)
     now = datetime.now()
     curr_year = datetime.now().year
     date_list = {

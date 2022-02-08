@@ -7,3 +7,18 @@ WEEKDAYS = {
     "Saturday": 5,
     "Sunday": 6,
 }
+
+RU_MONTHS_TO_EN = {
+    "Янв": "Jan",
+    "Фев": "Feb",
+    "Мар": "Mar",
+    "Апр": "Apr",
+    "Май": "May",
+    "Июн": "June",
+    "Июл": "July",
+    "Авг": "Aug",
+    "Сен": "Sept",
+    "Окт": "Oct",
+    "Ноя": "Nov",
+    "Дек": "Dec",
+}
