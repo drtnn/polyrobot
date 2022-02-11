@@ -1,9 +1,8 @@
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 
-from .models import Lesson, ScheduledLesson, LessonPlace, LessonRoom, LessonTeacher, LessonType, ScheduledLessonNote
 from apps.s3.serializers import FileSerializer
-from ..s3.models import File
+from .models import Lesson, ScheduledLesson, LessonPlace, LessonRoom, LessonTeacher, LessonType, ScheduledLessonNote
+from apps.s3.models import File
 
 
 class LessonRoomSerializer(serializers.ModelSerializer):
@@ -33,13 +32,14 @@ class LessonTypeSerializer(serializers.ModelSerializer):
 
 
 class LessonReadSerializer(serializers.ModelSerializer):
+    group = serializers.CharField(source='group.number')
     type = serializers.CharField(source='type.title')
     place = LessonPlaceSerializer()
     teachers = LessonTeacherSerializer(many=True)
 
     class Meta:
         model = Lesson
-        fields = ['title', 'type', 'place', 'teachers']
+        fields = ['title', 'group', 'type', 'place', 'teachers']
 
 
 class ScheduledLessonSerializer(serializers.ModelSerializer):
