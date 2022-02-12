@@ -210,7 +210,7 @@ iframe {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    padding: 33px 130px 33px 95px;
+    padding: 33px 95px 33px 95px;
 }
 
 /*------------------------------------------------------------------
@@ -228,6 +228,7 @@ iframe {
 [  ]*/
 .login100-form {
     width: 290px;
+    align-self: center;
 }
 
 .login100-form-title {
@@ -240,7 +241,7 @@ iframe {
 
     width: 100%;
     display: block;
-    padding-bottom: 45px;
+    padding-bottom: 30px;
 }
 
 
@@ -384,7 +385,7 @@ iframe {
 
 @media (max-width: 992px) {
     .wrap-login100 {
-        padding: 33px 90px 33px 85px;
+        padding: 33px 85px 33px 85px;
     }
 
     .login100-pic {
