@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
+from apps.s3.models import File
 from apps.s3.serializers import FileSerializer
 from .models import Lesson, ScheduledLesson, LessonPlace, LessonRoom, LessonTeacher, LessonType, ScheduledLessonNote
-from apps.s3.models import File
 
 
 class LessonRoomSerializer(serializers.ModelSerializer):

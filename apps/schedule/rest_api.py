@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError

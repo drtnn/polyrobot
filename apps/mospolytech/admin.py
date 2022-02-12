@@ -5,7 +5,7 @@ from apps.mospolytech.models import MospolytechUser, Group, PersonalData, Studen
 
 class MospolytechUserAdmin(admin.ModelAdmin):
     list_display = ('login', 'telegram')
-    search_fields = ('login', 'telegram')
+    search_fields = ('login', 'telegram__id', 'telegram__username', 'telegram__full_name',)
 
     list_filter = ('student__group',)
 
@@ -26,14 +26,17 @@ class PersonalDataAdmin(admin.ModelAdmin):
 
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('user', 'group', 'personal_data')
-    search_fields = ('user', 'group', 'personal_data')
-
+    search_fields = (
+        'user__login', 'group__number', 'personal_data__name', 'personal_data__surname', 'personal_data__patronymic'
+    )
     list_filter = ('group',)
 
 
 class TeacherAdmin(admin.ModelAdmin):
     list_display = ('user', 'groups_str', 'personal_data')
-    search_fields = ('user', 'groups', 'personal_data')
+    search_fields = (
+        'user__login', 'groups__number', 'personal_data__name', 'personal_data__surname', 'personal_data__patronymic'
+    )
 
     list_filter = ('groups',)
 

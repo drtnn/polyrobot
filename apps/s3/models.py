@@ -1,7 +1,7 @@
 from django.db import models
 
-from apps.core.storage_backends import PrivateMediaStorage
 from apps.core.models import Timestampable
+from apps.core.storage_backends import PrivateMediaStorage
 
 
 class File(Timestampable):

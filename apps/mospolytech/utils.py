@@ -1,10 +1,9 @@
 from json.decoder import JSONDecodeError
+from urllib.parse import urlencode
 
 import requests
 from django.conf import settings
 from rest_framework.exceptions import ValidationError
-
-from urllib.parse import urlencode
 
 
 class MospolytechParser:

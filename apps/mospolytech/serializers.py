@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import MospolytechUser, PersonalData
+from .models import MospolytechUser
 
 
 class MospolytechUserSerializer(serializers.ModelSerializer):
