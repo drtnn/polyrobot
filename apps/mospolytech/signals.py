@@ -8,7 +8,7 @@ from ..schedule.utils import save_schedule
 
 @receiver([post_save], sender=MospolytechUser)
 def save_mospolytech_user(sender, instance: MospolytechUser, **kwargs):
-    user = instance.information()['user']
+    user = instance.profile()['user']
     if user['user_status'] == 'stud':
         group, _ = Group.objects.get_or_create(number=user['group'])
 

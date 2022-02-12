@@ -25,7 +25,7 @@ class MospolytechUser(Timestampable):
             self.save()
         return self.cached_token
 
-    def information(self) -> dict:
+    def profile(self) -> dict:
         return MospolytechParser.get_data_from_mospolytech(self, MospolytechParser.USER)
 
     def schedule(self, is_session: bool = False) -> dict:

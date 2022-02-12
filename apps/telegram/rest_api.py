@@ -24,12 +24,12 @@ class TelegramUserViewSet(viewsets.ModelViewSet):
 
         return Response(user.schedule(is_session=True), status=200)
 
-    @action(detail=True, methods=['GET'], url_path='information')
-    def information(self, request, *args, **kwargs):
+    @action(detail=True, methods=['GET'], url_path='profile')
+    def profile(self, request, *args, **kwargs):
         telegram_user: TelegramUser = self.get_object()
         user = telegram_user.mospolytechuser
 
-        return Response(user.information(), status=200)
+        return Response(user.profile(), status=200)
 
     @action(detail=True, methods=['GET'], url_path='payments')
     def payments(self, request, *args, **kwargs):
