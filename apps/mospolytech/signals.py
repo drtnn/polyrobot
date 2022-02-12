@@ -2,6 +2,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from .models import MospolytechUser, Student, Group, PersonalData
+from ..schedule.models import ScheduledLesson
+from ..schedule.utils import save_schedule
 
 
 @receiver([post_save], sender=MospolytechUser)
@@ -17,3 +19,7 @@ def save_mospolytech_user(sender, instance: MospolytechUser, **kwargs):
             personal_data = instance.student.personal_data
 
         Student.objects.update_or_create(user=instance, personal_data=personal_data, defaults={'group': group})
+
+        if not ScheduledLesson.objects.filter(lesson__group=group).exists():
+            save_schedule(group, instance.schedule(is_session=False))
+            save_schedule(group, instance.schedule(is_session=True))

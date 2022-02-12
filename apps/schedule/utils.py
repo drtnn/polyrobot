@@ -1,8 +1,9 @@
 import re
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from typing import Union, Dict, List
 
+from django.db import transaction
 from rest_framework.exceptions import ValidationError
 
 from apps.mospolytech.models import Group, Student
@@ -15,7 +16,7 @@ def change_month_on_en(raw_datetime):
     return raw_datetime.replace(month, RU_MONTHS_TO_EN[month])
 
 
-def get_nearest_date(raw_date: str) -> datetime.date:
+def get_nearest_date(raw_date: str) -> date:
     raw_date = change_month_on_en(raw_date)
     now = datetime.now()
     curr_year = datetime.now().year
@@ -29,7 +30,7 @@ def get_nearest_date(raw_date: str) -> datetime.date:
 
 
 def schedule_repeated_lessons(
-        repeated_lessons: Dict[str, list], first_date: datetime.date, last_date: datetime.date
+        repeated_lessons: Dict[str, list], first_date: date, last_date: date
 ) -> list:
     schedule_lessons = []
     today = first_date
@@ -49,17 +50,16 @@ def schedule_repeated_lessons(
 
 
 def save_lesson_place(lesson: dict) -> LessonPlace:
-    rooms = [LessonRoom.objects.get_or_create(number=room) for room in lesson['rooms']]
+    rooms = [LessonRoom.objects.get_or_create(number=room)[0] for room in lesson['rooms']]
     if lesson['rooms']:
         lesson_place = LessonPlace.objects.get_or_none(title=lesson['place'], link=lesson['link'],
-                                                       rooms__in=lesson['rooms'])
+                                                       rooms__number__in=lesson['rooms'])
     else:
         lesson_place = LessonPlace.objects.get_or_none(title=lesson['place'], link=lesson['link'])
     if not lesson_place:
         lesson_place = LessonPlace.objects.create(title=lesson['place'], link=lesson['link'])
 
-    for room in rooms:
-        lesson_place.rooms.add(room)
+    lesson_place.rooms.add(*[room.id for room in rooms])
 
     return lesson_place
 
@@ -68,10 +68,10 @@ def save_schedule(group: Group, schedule: Union[Dict, List]):
     if schedule and isinstance(schedule, dict):
         scheduled_lessons = []
         repeated_lessons = defaultdict(list)
-        first_date = datetime.today().date()
-        last_date = datetime.today().date()
+        first_date = date.today()
+        last_date = date.today()
 
-        for date, lessons in schedule.items():
+        for raw_date, lessons in schedule.items():
             lessons_list = lessons['lessons']
 
             for lesson in lessons_list:
@@ -91,13 +91,13 @@ def save_schedule(group: Group, schedule: Union[Dict, List]):
                                                           place=lesson_place)
                     lesson_object.teachers.add(*lesson_teachers)
 
-                if re.fullmatch(r'\d{4}-\d\d-\d\d', date):
+                if re.fullmatch(r'\d{4}-\d\d-\d\d', raw_date):
                     # Not repeated lessons
-                    raw_datetime = f'{date} {lesson["timeInterval"].split(" - ")[0].replace(" ", "")} +0300'
+                    raw_datetime = f'{raw_date} {lesson["timeInterval"].split(" - ")[0].replace(" ", "")} +0300'
                     scheduled_lessons.append(ScheduledLesson(lesson=lesson_object, datetime=raw_datetime))
                 else:
                     # Repeated lessons
-                    weekday = WEEKDAYS[date]
+                    weekday = WEEKDAYS[raw_date]
                     raw_dates = lesson['dateInterval'].split(' - ')
                     from_date, to_date = get_nearest_date(raw_dates[0]), get_nearest_date(raw_dates[1])
                     first_date = from_date if from_date < first_date else first_date
@@ -116,6 +116,7 @@ def save_schedule(group: Group, schedule: Union[Dict, List]):
         LessonRoom.objects.filter(lessons__isnull=True).delete()
 
 
+@transaction.atomic
 def update_schedule():
     # TODO: Не удалять все объекты
     ScheduledLesson.objects.all().delete()

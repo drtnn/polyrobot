@@ -32,7 +32,7 @@ class LessonPlace(BaseModel):
 
 
 class LessonTeacher(BaseModel):
-    full_name = models.CharField(verbose_name='Lesson Teacher', max_length=32)
+    full_name = models.CharField(verbose_name='Lesson Teacher', max_length=48)
 
     class Meta:
         verbose_name = 'Преподаватель'

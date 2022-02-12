@@ -28,8 +28,6 @@ class ScheduledLessonViewSet(mixins.ListModelMixin,
             group = Group.objects.get(student__user__telegram_id=self.kwargs['telegram_pk'])
             qs = qs.filter(lesson__group=group)
 
-        date = datetime.today().date() if date == 'today' else date
-
         if date:
             qs = qs.filter(datetime__contains=date)
         else:
