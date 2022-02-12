@@ -11,7 +11,7 @@ class LessonRoomAdmin(admin.ModelAdmin):
 
 class LessonPlaceAdmin(admin.ModelAdmin):
     list_display = ('title', 'rooms_str', 'link')
-    search_fields = ('title', 'rooms', 'link')
+    search_fields = ('title', 'rooms__number', 'link')
 
     list_filter = ('title',)
 
@@ -28,23 +28,23 @@ class LessonTypeAdmin(admin.ModelAdmin):
 
 class LessonAdmin(admin.ModelAdmin):
     list_display = ('title', 'group', 'type', 'place', 'teachers_str')
-    search_fields = ('title', 'group', 'type', 'place', 'teachers')
+    search_fields = ('title', 'group__number', 'type__title', 'place__title', 'teachers__full_name')
 
-    list_filter = ('title', 'group', 'type', 'place', 'teachers')
+    list_filter = ('title', 'group__number', 'type__title', 'place__title', 'teachers__full_name')
 
 
 class ScheduledLessonAdmin(admin.ModelAdmin):
     list_display = ('lesson', 'datetime')
-    search_fields = ('lesson', 'datetime')
+    search_fields = ('lesson__title', 'datetime')
 
-    list_filter = ('lesson', 'datetime')
+    list_filter = ('lesson__title', 'datetime')
 
 
 class ScheduledLessonNoteAdmin(admin.ModelAdmin):
     list_display = ('lesson', 'datetime', 'text', 'files_count')
-    search_fields = ('lesson', 'datetime', 'text', 'files_count')
+    search_fields = ('lesson__title', 'datetime', 'text')
 
-    list_filter = ('lesson', 'datetime')
+    list_filter = ('lesson__title', 'datetime')
 
 
 admin.site.register(LessonRoom, LessonRoomAdmin)

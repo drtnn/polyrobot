@@ -8,7 +8,7 @@ from apps.s3.models import File
 class LessonRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = LessonRoom
-        fields = ['id', 'number']
+        fields = ['number']
 
 
 class LessonPlaceSerializer(serializers.ModelSerializer):
