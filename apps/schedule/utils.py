@@ -95,6 +95,11 @@ def save_schedule(group: Group, schedule: Union[Dict, List]):
                     # Not repeated lessons
                     raw_datetime = f'{raw_date} {lesson["timeInterval"].split(" - ")[0].replace(" ", "")} +0300'
                     scheduled_lessons.append(ScheduledLesson(lesson=lesson_object, datetime=raw_datetime))
+                elif re.fullmatch(r'\d\d \w{3}', lesson['dateInterval']):
+                    # Not repeated lessons
+                    scheduled_lessons.append(
+                        ScheduledLesson(lesson=lesson_object, datetime=get_nearest_date(lesson['dateInterval']))
+                    )
                 else:
                     # Repeated lessons
                     weekday = WEEKDAYS[raw_date]
@@ -138,6 +143,8 @@ def update_schedule():
             except ValidationError:
                 continue
             else:
-                save_schedule(group, schedule)
-                save_schedule(group, session_schedule)
+                if isinstance(schedule, dict) and schedule.get('status') != 'error':
+                    save_schedule(group, schedule)
+                if isinstance(session_schedule, dict) and session_schedule.get('status') != 'error':
+                    save_schedule(group, session_schedule)
                 break
