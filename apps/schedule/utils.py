@@ -8,7 +8,8 @@ from rest_framework.exceptions import ValidationError
 
 from apps.mospolytech.models import Group, Student
 from apps.schedule.constants import WEEKDAYS, RU_MONTHS_TO_EN
-from apps.schedule.models import ScheduledLesson, Lesson, LessonPlace, LessonTeacher, LessonType, LessonRoom
+from apps.schedule.models import ScheduledLesson, Lesson, LessonPlace, LessonTeacher, LessonType, LessonRoom, \
+    ScheduledLessonNote
 
 
 def change_month_on_en(raw_datetime):
@@ -123,7 +124,10 @@ def save_schedule(group: Group, schedule: Union[Dict, List]):
 
 @transaction.atomic
 def update_schedule():
-    # TODO: Не удалять все объекты
+    note_dict = [
+        {'lesson_id': note.scheduled_lesson.lesson.id, 'datetime': note.scheduled_lesson.datetime, 'note': note}
+        for note in ScheduledLessonNote.objects.all()
+    ]
     ScheduledLesson.objects.all().delete()
 
     group_users = {}
@@ -148,3 +152,12 @@ def update_schedule():
                 if isinstance(session_schedule, dict) and session_schedule.get('status') != 'error':
                     save_schedule(group, session_schedule)
                 break
+
+    for note in note_dict:
+        note_object = note['note']
+        scheduled_lesson = ScheduledLesson.objects.get_or_none(lesson__id=note['lesson_id'], datetime=note['datetime'])
+        if scheduled_lesson:
+            note_object.scheduled_lesson = scheduled_lesson
+            note_object.save()
+        else:
+            note_object.delete()

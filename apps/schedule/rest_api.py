@@ -7,7 +7,7 @@ from apps.mospolytech.models import Group
 from apps.s3.models import File
 from apps.schedule.models import ScheduledLesson, ScheduledLessonNote
 from apps.schedule.serializers import ScheduledLessonSerializer, ScheduledLessonNoteReadSerializer, \
-    ScheduledLessonAddNoteSerializer, ScheduledLessonNoteWriteSerializer
+    ScheduledLessonNoteWriteSerializer
 
 
 class ScheduledLessonViewSet(mixins.ListModelMixin,
@@ -39,7 +39,7 @@ class ScheduledLessonViewSet(mixins.ListModelMixin,
     def add_note(self, request, *args, **kwargs):
         scheduled_lesson = self.get_object()
 
-        serializer = ScheduledLessonAddNoteSerializer(data=request.data | {'scheduled_lesson': scheduled_lesson.id})
+        serializer = ScheduledLessonNoteWriteSerializer(data=request.data | {'scheduled_lesson': scheduled_lesson.id})
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
@@ -59,10 +59,7 @@ class ScheduledLessonNoteViewSet(viewsets.ModelViewSet):
 
         if 'scheduled_lesson_pk' in self.kwargs:
             scheduled_lesson = ScheduledLesson.objects.get_or_none(id=self.kwargs['scheduled_lesson_pk'])
-            if not scheduled_lesson:
-                qs = qs.none()
-            else:
-                qs = qs.filter(lesson=scheduled_lesson.lesson, datetime=scheduled_lesson.datetime)
+            qs = qs.filter(scheduled_lesson=scheduled_lesson)
         return qs
 
     @action(detail=True, methods=['POST'], url_path='add-file')
@@ -74,5 +71,4 @@ class ScheduledLessonNoteViewSet(viewsets.ModelViewSet):
             raise ValidationError({'error': '`files` is not valid'})
         note.files.add(*File.objects.filter(id__in=files))
 
-        serializer = ScheduledLessonNoteReadSerializer(instance=note)
-        return Response(serializer.data, status=200)
+        return Response(ScheduledLessonNoteReadSerializer(instance=note).data, status=200)

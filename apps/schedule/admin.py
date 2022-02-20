@@ -41,10 +41,10 @@ class ScheduledLessonAdmin(admin.ModelAdmin):
 
 
 class ScheduledLessonNoteAdmin(admin.ModelAdmin):
-    list_display = ('lesson', 'datetime', 'text', 'files_count')
-    search_fields = ('lesson__title', 'datetime', 'text')
+    list_display = ('scheduled_lesson', 'text', 'files_count')
+    search_fields = ('scheduled_lesson__lesson__title', 'scheduled_lesson__datetime', 'text')
 
-    list_filter = ('lesson__title', 'datetime')
+    list_filter = ('scheduled_lesson__lesson__title', 'scheduled_lesson__datetime')
 
 
 admin.site.register(LessonRoom, LessonRoomAdmin)
