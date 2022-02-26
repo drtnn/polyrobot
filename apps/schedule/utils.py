@@ -51,16 +51,17 @@ def schedule_repeated_lessons(
 
 
 def save_lesson_place(lesson: dict) -> LessonPlace:
-    rooms = [LessonRoom.objects.get_or_create(number=room)[0] for room in lesson['rooms']]
-    if lesson['rooms']:
-        lesson_place = LessonPlace.objects.get_or_none(title=lesson['place'], link=lesson['link'],
-                                                       rooms__number__in=lesson['rooms'])
+    room_ids = [LessonRoom.objects.get_or_create(number=room)[0].id for room in lesson['rooms']]
+    if room_ids:
+        lesson_place = LessonPlace.objects.filter(title=lesson['place'], link=lesson['link'],
+                                                  rooms__in=room_ids).distinct().first()
     else:
-        lesson_place = LessonPlace.objects.get_or_none(title=lesson['place'], link=lesson['link'])
+        lesson_place = LessonPlace.objects.get_or_none(title=lesson['place'], link=lesson['link'],
+                                                       rooms__isnull=True)
+
     if not lesson_place:
         lesson_place = LessonPlace.objects.create(title=lesson['place'], link=lesson['link'])
-
-    lesson_place.rooms.add(*[room.id for room in rooms])
+        lesson_place.rooms.add(*[room_id for room_id in room_ids])
 
     return lesson_place
 
