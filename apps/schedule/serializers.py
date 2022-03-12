@@ -3,6 +3,8 @@ from rest_framework import serializers
 from apps.s3.models import File
 from apps.s3.serializers import FileSerializer
 from .models import Lesson, ScheduledLesson, LessonPlace, LessonRoom, LessonTeacher, LessonType, ScheduledLessonNote
+from ..telegram.models import TelegramUser
+from ..telegram.serializers import TelegramUserSerializer
 
 
 class LessonRoomSerializer(serializers.ModelSerializer):
@@ -55,7 +57,7 @@ class ScheduledLessonNoteReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ScheduledLessonNote
-        fields = ['id', 'scheduled_lesson', 'text', 'files']
+        fields = ['id', 'scheduled_lesson', 'text', 'files', 'created_by']
 
 
 class ScheduledLessonNoteWriteSerializer(serializers.ModelSerializer):
@@ -63,5 +65,5 @@ class ScheduledLessonNoteWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ScheduledLessonNote
-        fields = ['id', 'scheduled_lesson', 'text', 'files']
+        fields = ['id', 'scheduled_lesson', 'text', 'files', 'created_by']
 
