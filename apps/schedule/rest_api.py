@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -8,6 +9,7 @@ from apps.s3.models import File
 from apps.schedule.models import ScheduledLesson, ScheduledLessonNote
 from apps.schedule.serializers import ScheduledLessonSerializer, ScheduledLessonNoteReadSerializer, \
     ScheduledLessonNoteWriteSerializer
+from apps.schedule.utils import export_scheduled_lessons
 
 
 class ScheduledLessonViewSet(mixins.ListModelMixin,
@@ -44,6 +46,15 @@ class ScheduledLessonViewSet(mixins.ListModelMixin,
         serializer.save()
 
         return Response(ScheduledLessonNoteReadSerializer(serializer.instance).data, status=200)
+
+    @action(detail=False, methods=['GET'])
+    def export(self, request, *args, **kwargs):
+        filename = 'Расписание.ics'
+        calendar = export_scheduled_lessons(self.get_queryset())
+
+        response = HttpResponse(calendar, content_type='text/calendar')
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+        return response
 
 
 class ScheduledLessonNoteViewSet(viewsets.ModelViewSet):

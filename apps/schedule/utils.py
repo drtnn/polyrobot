@@ -1,9 +1,12 @@
 import re
+from ics import Calendar, Event
 from collections import defaultdict
 from datetime import date, datetime, timedelta
 from typing import Union, Dict, List
 
 from django.db import transaction
+from django.db.models import QuerySet
+from ics.organizer import Organizer
 from rest_framework.exceptions import ValidationError
 
 from apps.mospolytech.models import Group, Student
@@ -162,3 +165,24 @@ def update_schedule():
             note_object.save()
         else:
             note_object.delete()
+
+
+def export_scheduled_lessons(scheduled_lessons: QuerySet[ScheduledLesson]) -> Calendar:
+    calendar = Calendar()
+
+    for scheduled_lesson in scheduled_lessons:
+        lesson = scheduled_lesson.lesson
+        calendar.events.add(
+            Event(
+                name=lesson.title,
+                begin=scheduled_lesson.datetime,
+                end=scheduled_lesson.end_datetime,
+                description='\n'.join([lesson.type.title, lesson.teachers_str if lesson.teachers.exists() else '']),
+                created=datetime.now(),
+                location=lesson.place.title,
+                url=lesson.place.link,
+                categories='Расписание МосПолитеха',
+                organizer='Робот Политеха'
+            )
+        )
+    return calendar

@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.db import models
 
 from apps.core.models import BaseModel
@@ -76,12 +78,16 @@ class ScheduledLesson(BaseModel):
     lesson = models.ForeignKey('schedule.Lesson', verbose_name='Lesson', on_delete=models.CASCADE)
     datetime = models.DateTimeField(verbose_name='Lesson DateTime')
 
-    def __str__(self):
-        return str(self.lesson)
-
     class Meta:
         verbose_name = 'Запланированное занятие'
         verbose_name_plural = 'Запланированные занятия'
+
+    def __str__(self):
+        return str(self.lesson)
+
+    @property
+    def end_datetime(self):
+        return self.datetime + timedelta(hours=1, minutes=30)
 
 
 class ScheduledLessonNote(BaseModel):
