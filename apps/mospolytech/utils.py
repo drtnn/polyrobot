@@ -12,8 +12,8 @@ class MospolytechParser:
     PAYMENTS = 'Payments'
     ACADEMIC_PERFORMANCE = 'AcademicPerformance'
 
-    @staticmethod
-    def authenticate_mospolytech(login: str, password: str):
+    @classmethod
+    def authenticate_mospolytech(cls, login: str, password: str):
         response = requests.post(settings.E_MOSPOLYTECH_ENDPOINT + '/old/lk_api.php',
                                  data={
                                      'ulogin': login,
@@ -28,15 +28,11 @@ class MospolytechParser:
         else:
             return token
 
-    @staticmethod
-    def get_data_from_mospolytech(mospolytech_user, key: str, cached_token=True, **kwargs):
-        token = mospolytech_user.token(cached=cached_token)
+    @classmethod
+    def get_data_from_mospolytech_by_token(cls, token: str, key: str, **kwargs):
         url = f'{settings.E_MOSPOLYTECH_ENDPOINT}/old/lk_api.php?get{key}&token={token}&{urlencode(kwargs)}'
 
         response = requests.post(url, verify=False)
-
-        if response.status_code != 200:
-            return MospolytechParser.get_data_from_mospolytech(mospolytech_user, key, cached_token=False)
 
         try:
             response_data = response.json()
@@ -44,3 +40,10 @@ class MospolytechParser:
             raise ValidationError({'error': f'Can not get {key.lower()} information from Mospolytech'})
         else:
             return response_data
+
+    @classmethod
+    def get_data_from_mospolytech(cls, mospolytech_user, key: str, **kwargs):
+        try:
+            return cls.get_data_from_mospolytech_by_token(mospolytech_user.token(cached=True), key, **kwargs)
+        except ValidationError:
+            return cls.get_data_from_mospolytech_by_token(mospolytech_user.token(cached=False), key, **kwargs)

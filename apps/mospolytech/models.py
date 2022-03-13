@@ -7,17 +7,26 @@ from apps.schedule.models import ScheduledLesson
 
 
 class MospolytechUser(Timestampable):
+    name = models.CharField(verbose_name='Name', max_length=16)
+    surname = models.CharField(verbose_name='Surname', max_length=16)
+    patronymic = models.CharField(verbose_name='Patronymic', max_length=16, null=True, blank=True)
+
     login = models.CharField(verbose_name='Mospolytech Login', max_length=32)
     password = EncryptedCharField(verbose_name='Mospolytech Password', max_length=128)
+    cached_token = EncryptedCharField(verbose_name='Cached Mospolytech Token', max_length=256)
+
     telegram = models.OneToOneField('telegram.TelegramUser', verbose_name='Telegram User', on_delete=models.CASCADE)
-    cached_token = models.TextField(verbose_name='Cached Mospolytech Token')
 
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
     def __str__(self):
-        return self.login
+        return self.full_name
+
+    @property
+    def full_name(self):
+        return f'{self.surname} {self.name}' + (f' {self.patronymic}' if self.patronymic else '')
 
     def token(self, cached=True) -> str:
         if not cached:
@@ -50,28 +59,9 @@ class Group(BaseModel):
         return self.number
 
 
-class PersonalData(BaseModel):
-    name = models.CharField(verbose_name='Name', max_length=16)
-    surname = models.CharField(verbose_name='Surname', max_length=16)
-    patronymic = models.CharField(verbose_name='Patronymic', max_length=16, null=True, blank=True)
-
-    class Meta:
-        verbose_name = 'Персональные данные'
-        verbose_name_plural = 'Персональные данные'
-
-    @property
-    def full_name(self):
-        return f'{self.surname} {self.name}' + (f' {self.patronymic}' if self.patronymic else '')
-
-    def __str__(self):
-        return self.full_name
-
-
 class Student(BaseModel):
     user = models.OneToOneField('mospolytech.MospolytechUser', verbose_name='User', on_delete=models.CASCADE)
     group = models.ForeignKey('mospolytech.Group', verbose_name='Group', on_delete=models.CASCADE)
-    personal_data = models.OneToOneField('mospolytech.PersonalData', verbose_name='Personal Data',
-                                         on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Студент'
@@ -84,8 +74,6 @@ class Student(BaseModel):
 class Teacher(BaseModel):
     user = models.OneToOneField('mospolytech.MospolytechUser', verbose_name='User', on_delete=models.CASCADE)
     groups = models.ManyToManyField('mospolytech.Group', verbose_name='Groups')
-    personal_data = models.OneToOneField('mospolytech.PersonalData', verbose_name='Personal Data',
-                                         on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Преподаватель'

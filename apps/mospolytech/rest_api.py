@@ -27,11 +27,16 @@ class MospolytechUserViewSet(mixins.ListModelMixin,
         token = MospolytechParser.authenticate_mospolytech(login=login, password=password)
 
         user = MospolytechUser.objects.get_or_none(telegram=telegram)
+        info = MospolytechParser.get_data_from_mospolytech_by_token(token=token, key=MospolytechParser.USER)['user']
+
         serializer = MospolytechUserSerializer(instance=user, data={
             'login': login,
             'password': password,
             'telegram': telegram,
-            'cached_token': token
+            'cached_token': token,
+            'name': info['name'],
+            'surname': info['surname'],
+            'patronymic': info['patronymic'],
         })
         serializer.is_valid(raise_exception=True)
         serializer.save()

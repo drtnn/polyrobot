@@ -1,11 +1,13 @@
 from django.contrib import admin
 
-from apps.mospolytech.models import MospolytechUser, Group, PersonalData, Student, Teacher
+from apps.mospolytech.models import MospolytechUser, Group, Student, Teacher
 
 
 class MospolytechUserAdmin(admin.ModelAdmin):
     list_display = ('login', 'telegram')
-    search_fields = ('login', 'telegram__id', 'telegram__username', 'telegram__full_name',)
+    search_fields = (
+        'login', 'telegram__id', 'telegram__username', 'telegram__full_name', 'name', 'surname', 'patronymic'
+    )
 
     list_filter = ('student__group',)
 
@@ -17,25 +19,18 @@ class GroupAdmin(admin.ModelAdmin):
     search_fields = ('number',)
 
 
-class PersonalDataAdmin(admin.ModelAdmin):
-    list_display = ('name', 'surname', 'patronymic')
-    search_fields = ('name', 'surname', 'patronymic')
-
-    list_filter = ('name', 'surname', 'patronymic')
-
-
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('user', 'group', 'personal_data')
+    # list_display = ('user', 'group', 'user__full_name')
     search_fields = (
-        'user__login', 'group__number', 'personal_data__name', 'personal_data__surname', 'personal_data__patronymic'
+        'user__login', 'group__number', 'user__name', 'user__surname', 'user__patronymic'
     )
     list_filter = ('group',)
 
 
 class TeacherAdmin(admin.ModelAdmin):
-    list_display = ('user', 'groups_str', 'personal_data')
+    # list_display = ('user', 'groups_str', 'user__full_name')
     search_fields = (
-        'user__login', 'groups__number', 'personal_data__name', 'personal_data__surname', 'personal_data__patronymic'
+        'user__login', 'groups__number', 'user__name', 'user__surname', 'user__patronymic'
     )
 
     list_filter = ('groups',)
@@ -43,6 +38,5 @@ class TeacherAdmin(admin.ModelAdmin):
 
 admin.site.register(MospolytechUser, MospolytechUserAdmin)
 admin.site.register(Group, GroupAdmin)
-admin.site.register(PersonalData, PersonalDataAdmin)
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Teacher, TeacherAdmin)
