@@ -1,15 +1,16 @@
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 
-from .models import Lesson, ScheduledLesson, LessonPlace, LessonRoom, LessonTeacher, LessonType, ScheduledLessonNote
+from apps.s3.models import File
 from apps.s3.serializers import FileSerializer
-from ..s3.models import File
+from .models import Lesson, ScheduledLesson, LessonPlace, LessonRoom, LessonTeacher, LessonType, ScheduledLessonNote
+from ..telegram.models import TelegramUser
+from ..telegram.serializers import TelegramUserSerializer
 
 
 class LessonRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = LessonRoom
-        fields = ['id', 'number']
+        fields = ['number']
 
 
 class LessonPlaceSerializer(serializers.ModelSerializer):
@@ -33,13 +34,14 @@ class LessonTypeSerializer(serializers.ModelSerializer):
 
 
 class LessonReadSerializer(serializers.ModelSerializer):
+    group = serializers.CharField(source='group.number')
     type = serializers.CharField(source='type.title')
     place = LessonPlaceSerializer()
     teachers = LessonTeacherSerializer(many=True)
 
     class Meta:
         model = Lesson
-        fields = ['title', 'type', 'place', 'teachers']
+        fields = ['title', 'group', 'type', 'place', 'teachers']
 
 
 class ScheduledLessonSerializer(serializers.ModelSerializer):
@@ -55,7 +57,7 @@ class ScheduledLessonNoteReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ScheduledLessonNote
-        fields = ['id', 'lesson', 'datetime', 'text', 'files']
+        fields = ['id', 'scheduled_lesson', 'text', 'files', 'created_by']
 
 
 class ScheduledLessonNoteWriteSerializer(serializers.ModelSerializer):
@@ -63,24 +65,5 @@ class ScheduledLessonNoteWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ScheduledLessonNote
-        fields = ['id', 'lesson', 'datetime', 'text', 'files']
+        fields = ['id', 'scheduled_lesson', 'text', 'files', 'created_by']
 
-
-class ScheduledLessonAddNoteSerializer(serializers.ModelSerializer):
-    scheduled_lesson = serializers.PrimaryKeyRelatedField(queryset=ScheduledLesson.objects.all())
-    files = serializers.PrimaryKeyRelatedField(many=True, queryset=File.objects.all(), required=False)
-
-    class Meta:
-        model = ScheduledLessonNote
-        fields = ['scheduled_lesson', 'text', 'files']
-
-    def create(self, validated_data):
-        scheduled_lesson = validated_data.pop('scheduled_lesson')
-        validated_data['lesson'], validated_data['datetime'] = scheduled_lesson.lesson, scheduled_lesson.datetime
-        return super(ScheduledLessonAddNoteSerializer, self).create(validated_data=validated_data)
-
-    def update(self, instance, validated_data):
-        if validated_data.get('scheduled_lesson'):
-            scheduled_lesson = validated_data.pop('scheduled_lesson')
-            validated_data['lesson'], validated_data['datetime'] = scheduled_lesson.lesson, scheduled_lesson.datetime
-        return super(ScheduledLessonAddNoteSerializer, self).update(instance=instance, validated_data=validated_data)

@@ -1,5 +1,4 @@
-from datetime import datetime
-
+from django.http import HttpResponse
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -9,7 +8,8 @@ from apps.mospolytech.models import Group
 from apps.s3.models import File
 from apps.schedule.models import ScheduledLesson, ScheduledLessonNote
 from apps.schedule.serializers import ScheduledLessonSerializer, ScheduledLessonNoteReadSerializer, \
-    ScheduledLessonAddNoteSerializer, ScheduledLessonNoteWriteSerializer
+    ScheduledLessonNoteWriteSerializer
+from apps.schedule.utils import export_scheduled_lessons
 
 
 class ScheduledLessonViewSet(mixins.ListModelMixin,
@@ -28,8 +28,6 @@ class ScheduledLessonViewSet(mixins.ListModelMixin,
             group = Group.objects.get(student__user__telegram_id=self.kwargs['telegram_pk'])
             qs = qs.filter(lesson__group=group)
 
-        date = datetime.today().date() if date == 'today' else date
-
         if date:
             qs = qs.filter(datetime__contains=date)
         else:
@@ -43,11 +41,20 @@ class ScheduledLessonViewSet(mixins.ListModelMixin,
     def add_note(self, request, *args, **kwargs):
         scheduled_lesson = self.get_object()
 
-        serializer = ScheduledLessonAddNoteSerializer(data=request.data | {'scheduled_lesson': scheduled_lesson.id})
+        serializer = ScheduledLessonNoteWriteSerializer(data=request.data | {'scheduled_lesson': scheduled_lesson.id})
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
         return Response(ScheduledLessonNoteReadSerializer(serializer.instance).data, status=200)
+
+    @action(detail=False, methods=['GET'])
+    def export(self, request, *args, **kwargs):
+        filename = 'Расписание.ics'
+        calendar = export_scheduled_lessons(self.get_queryset())
+
+        response = HttpResponse(calendar, content_type='text/calendar')
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+        return response
 
 
 class ScheduledLessonNoteViewSet(viewsets.ModelViewSet):
@@ -63,10 +70,7 @@ class ScheduledLessonNoteViewSet(viewsets.ModelViewSet):
 
         if 'scheduled_lesson_pk' in self.kwargs:
             scheduled_lesson = ScheduledLesson.objects.get_or_none(id=self.kwargs['scheduled_lesson_pk'])
-            if not scheduled_lesson:
-                qs = qs.none()
-            else:
-                qs = qs.filter(lesson=scheduled_lesson.lesson, datetime=scheduled_lesson.datetime)
+            qs = qs.filter(scheduled_lesson=scheduled_lesson)
         return qs
 
     @action(detail=True, methods=['POST'], url_path='add-file')
@@ -78,5 +82,4 @@ class ScheduledLessonNoteViewSet(viewsets.ModelViewSet):
             raise ValidationError({'error': '`files` is not valid'})
         note.files.add(*File.objects.filter(id__in=files))
 
-        serializer = ScheduledLessonNoteReadSerializer(instance=note)
-        return Response(serializer.data, status=200)
+        return Response(ScheduledLessonNoteReadSerializer(instance=note).data, status=200)

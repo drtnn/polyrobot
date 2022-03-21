@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.db import models
 
 from apps.core.models import BaseModel
@@ -15,7 +17,7 @@ class LessonRoom(BaseModel):
 
 
 class LessonPlace(BaseModel):
-    title = models.CharField(verbose_name='Lesson Place Title', max_length=32)
+    title = models.CharField(verbose_name='Lesson Place Title', max_length=64)
     rooms = models.ManyToManyField('schedule.LessonRoom', verbose_name='Lesson Rooms', related_name='lessons')
     link = models.CharField(verbose_name='Lesson Place Link', max_length=128, null=True, blank=True)
 
@@ -32,7 +34,7 @@ class LessonPlace(BaseModel):
 
 
 class LessonTeacher(BaseModel):
-    full_name = models.CharField(verbose_name='Lesson Teacher', max_length=32)
+    full_name = models.CharField(verbose_name='Lesson Teacher', max_length=48)
 
     class Meta:
         verbose_name = 'Преподаватель'
@@ -76,27 +78,32 @@ class ScheduledLesson(BaseModel):
     lesson = models.ForeignKey('schedule.Lesson', verbose_name='Lesson', on_delete=models.CASCADE)
     datetime = models.DateTimeField(verbose_name='Lesson DateTime')
 
-    def __str__(self):
-        return str(self.lesson)
-
     class Meta:
         verbose_name = 'Запланированное занятие'
         verbose_name_plural = 'Запланированные занятия'
 
+    def __str__(self):
+        return str(self.lesson)
+
+    @property
+    def end_datetime(self):
+        return self.datetime + timedelta(hours=1, minutes=30)
+
 
 class ScheduledLessonNote(BaseModel):
-    lesson = models.ForeignKey('schedule.Lesson', verbose_name='Lesson', on_delete=models.CASCADE)
-    datetime = models.DateTimeField(verbose_name='Lesson DateTime')
-    text = models.TextField(verbose_name='Lesson Note Text', max_length=4096, blank=True, null=True)
-    files = models.ManyToManyField('s3.File', verbose_name='Lesson Note Files',
-                                   related_name='scheduled_lesson_notes')
+    scheduled_lesson = models.ForeignKey('schedule.ScheduledLesson', verbose_name='Scheduled Lesson',
+                                         on_delete=models.SET_NULL, null=True)
+    text = models.TextField(verbose_name='Lesson Note Text', max_length=4096)
+    files = models.ManyToManyField('s3.File', verbose_name='Lesson Note Files', related_name='scheduled_lesson_notes')
+    created_by = models.ForeignKey('telegram.TelegramUser', verbose_name='Created by', on_delete=models.CASCADE,
+                                   related_name='created_notes')
 
     class Meta:
         verbose_name = 'Заметка к запланированному занятию'
         verbose_name_plural = 'Заметки к запланированным занятиям'
 
     def __str__(self):
-        return str(self.lesson)
+        return str(self.scheduled_lesson)
 
     @property
     def files_count(self):

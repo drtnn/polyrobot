@@ -6,9 +6,9 @@ from apps.s3.models import File
 from apps.s3.serializers import FileSerializer
 
 
-class MospolytechUserViewSet(mixins.RetrieveModelMixin,
-                             mixins.CreateModelMixin,
-                             viewsets.GenericViewSet):
+class FileViewSet(mixins.RetrieveModelMixin,
+                  mixins.CreateModelMixin,
+                  viewsets.GenericViewSet):
     queryset = File.objects.all()
     serializer_class = FileSerializer
 

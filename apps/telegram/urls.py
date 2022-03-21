@@ -1,8 +1,8 @@
 from django.urls import path, include
 from rest_framework_nested import routers
 
-from .rest_api import TelegramUserViewSet
 from apps.schedule.rest_api import ScheduledLessonViewSet
+from .rest_api import TelegramUserViewSet
 
 telegram_router = routers.SimpleRouter()
 telegram_router.register(r'telegram', TelegramUserViewSet, basename='telegram')

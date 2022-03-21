@@ -1,16 +1,16 @@
 import uuid
 
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 
 
 class GetOrNoneManager(models.Manager):
     """Adds get_or_none method to objects
     """
 
-    def get_or_none(self, **kwargs):
+    def get_or_none(self, *args, **kwargs):
         try:
-            return self.get(**kwargs)
+            return self.get(*args, **kwargs)
         except self.model.DoesNotExist:
             return None
 
