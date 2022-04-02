@@ -1,12 +1,11 @@
 import re
-from ics import Calendar, Event
 from collections import defaultdict
 from datetime import date, datetime, timedelta
 from typing import Union, Dict, List
 
 from django.db import transaction
 from django.db.models import QuerySet
-from ics.organizer import Organizer
+from ics import Calendar, Event
 from rest_framework.exceptions import ValidationError
 
 from apps.mospolytech.models import Group, Student

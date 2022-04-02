@@ -1,5 +1,27 @@
 (function ($) {
     "use strict";
+    var myModal = {
+        open(emoji, text) {
+            const modal = document.getElementById('loginResponseModal')
+            modal.setAttribute('aria-hidden', 'false')
+            modal.classList.remove('fade')
+            modal.style.display = 'flex'
+
+            modal.querySelectorAll('[data-bs-dismiss="modal"]').forEach(item => item.onclick = this.close.bind(this))
+            modal.querySelector('.modal-emoji').innerText = emoji
+            modal.querySelector('.modal-text').innerText = text
+
+            $(".wrap-login100").hide()
+        },
+        close() {
+            const modal = document.getElementById('loginResponseModal')
+            modal.setAttribute('aria-hidden', 'true')
+            modal.classList.add('fade')
+            modal.style.display = ''
+
+            $(".wrap-login100").show()
+        }
+    }
 
     let input = $('.validate-input .input100');
     const pathname = window.location.pathname.split('/');
@@ -29,10 +51,10 @@
                 }
             })
                 .done(function () {
-                    alert("success");
+                    myModal.open("✅️", "Авторизация прошла успешно!");
                 })
                 .fail(function () {
-                    alert("error");
+                    myModal.open("❗️", "Неверный логин или пароль!");
                 })
         }
     });

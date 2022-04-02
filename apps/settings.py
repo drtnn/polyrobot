@@ -92,6 +92,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'apps.wsgi.application'
 
+ENVIRONMENT = os.getenv("ENVIRONMENT")
+
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -156,8 +158,13 @@ STATICFILES_DIRS = [
 ]
 
 AWS_STATIC_LOCATION = 'static'
-STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STATIC_LOCATION}/'
-STATICFILES_STORAGE = 'apps.core.storage_backends.StaticStorage'
+
+if ENVIRONMENT == 'DEVELOPMENT':
+    STATIC_URL = '/static/'
+    STATIC_ROOT = PROJECT_ROOT + '/static'
+else:
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STATIC_LOCATION}/'
+    STATICFILES_STORAGE = 'apps.core.storage_backends.StaticStorage'
 
 AWS_PUBLIC_MEDIA_LOCATION = 'media/public'
 DEFAULT_FILE_STORAGE = 'apps.core.storage_backends.PublicMediaStorage'
