@@ -8,6 +8,8 @@ class TelegramUser(Timestampable):
     username = models.CharField(verbose_name='Telegram Username', null=True, blank=True, max_length=32)
     full_name = models.CharField(verbose_name='Telegram Full Name', max_length=64)
 
+    is_admin = models.BooleanField(verbose_name='Telegram Admin', default=False)
+
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
@@ -20,7 +22,7 @@ class TelegramMailing(Timestampable):
     text = models.TextField(verbose_name='Mailing Text')
     telegram_users = models.ManyToManyField(to='TelegramUser', verbose_name='Mailing Users', related_name='mailings')
     keyboard = models.ForeignKey(to='TelegramKeyboard', verbose_name='Mailing Keyboard', related_name='mailings',
-                                 on_delete=models.CASCADE, null=True)
+                                 on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         verbose_name = 'Рассылка'

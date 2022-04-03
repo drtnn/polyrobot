@@ -61,7 +61,8 @@ class Group(BaseModel):
 
 class Student(BaseModel):
     user = models.OneToOneField('mospolytech.MospolytechUser', verbose_name='User', on_delete=models.CASCADE)
-    group = models.ForeignKey('mospolytech.Group', verbose_name='Group', on_delete=models.CASCADE)
+    group = models.ForeignKey('mospolytech.Group', verbose_name='Group', related_name='students',
+                              on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Студент'
@@ -73,7 +74,7 @@ class Student(BaseModel):
 
 class Teacher(BaseModel):
     user = models.OneToOneField('mospolytech.MospolytechUser', verbose_name='User', on_delete=models.CASCADE)
-    groups = models.ManyToManyField('mospolytech.Group', verbose_name='Groups')
+    groups = models.ManyToManyField('mospolytech.Group', related_name='teachers', verbose_name='Groups')
 
     class Meta:
         verbose_name = 'Преподаватель'

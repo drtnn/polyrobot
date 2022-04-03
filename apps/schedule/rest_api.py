@@ -25,7 +25,7 @@ class ScheduledLessonViewSet(mixins.ListModelMixin,
         date_to = self.request.query_params.get('date_to', None)
 
         if 'telegram_pk' in self.kwargs:
-            group = Group.objects.get(student__user__telegram_id=self.kwargs['telegram_pk'])
+            group = Group.objects.get(students__user__telegram_id=self.kwargs['telegram_pk'])
             qs = qs.filter(lesson__group=group)
 
         if date:

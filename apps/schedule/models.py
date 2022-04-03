@@ -92,7 +92,7 @@ class ScheduledLesson(BaseModel):
 
 class ScheduledLessonNote(BaseModel):
     scheduled_lesson = models.ForeignKey('schedule.ScheduledLesson', verbose_name='Scheduled Lesson',
-                                         on_delete=models.SET_NULL, null=True)
+                                         on_delete=models.SET_NULL, blank=True, null=True)
     text = models.TextField(verbose_name='Lesson Note Text', max_length=4096)
     files = models.ManyToManyField('s3.File', verbose_name='Lesson Note Files', related_name='scheduled_lesson_notes')
     created_by = models.ForeignKey('telegram.TelegramUser', verbose_name='Created by', on_delete=models.CASCADE,

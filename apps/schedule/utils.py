@@ -133,14 +133,11 @@ def update_schedule():
     ]
     ScheduledLesson.objects.all().delete()
 
-    group_users = {}
+    group_users = defaultdict(list)
     for student in Student.objects.all():
-        if student.group.number in group_users:
-            group_users[student.group.number].append(student.user)
-        else:
-            group_users[student.group.number] = [student.user]
+        group_users[student.group.number].append(student.user)
 
-    groups = {group.number: group for group in Group.objects.filter(student__group__number__in=group_users.keys())}
+    groups = {group.number: group for group in Group.objects.filter(number__in=group_users.keys())}
 
     for group_number, group in groups.items():
         for actual_user in group_users.pop(group_number):

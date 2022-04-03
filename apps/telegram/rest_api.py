@@ -68,3 +68,10 @@ class TelegramUserViewSet(viewsets.ModelViewSet):
         semester_number = semester_number[0] if isinstance(semester_number, list) else semester_number
 
         return Response(user.academic_performance(semester_number=semester_number), status=200)
+
+    @action(detail=False, methods=['GET'], url_path='admin')
+    def admin(self, request, *args, **kwargs):
+        queryset = self.queryset.filter(is_admin=True)
+        serializer = TelegramUserSerializer(queryset, many=True)
+
+        return Response(serializer.data, status=200)
