@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from .views import login_to_mospolytech
 from .rest_api import MospolytechUserViewSet
 
+app_name = 'mospolytech'
 router = DefaultRouter()
 router.register(r'mospolytech', MospolytechUserViewSet, basename='mospolytech')
 urlpatterns = router.urls

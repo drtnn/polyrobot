@@ -1,12 +1,18 @@
+import logging
+
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from telebot.apihelper import ApiTelegramException
 
 from apps.mospolytech.utils import MospolytechParser
+from apps.telegram.bot import bot
 from .models import MospolytechUser
 from .serializers import MospolytechUserSerializer
+
+logger = logging.getLogger(__name__)
 
 
 class MospolytechUserViewSet(mixins.ListModelMixin,
@@ -21,8 +27,8 @@ class MospolytechUserViewSet(mixins.ListModelMixin,
         password = request.data.get('password')
         telegram = request.data.get('telegram')
 
-        if not (login or password or telegram):
-            raise ValidationError({'error': 'Login, password and telegram_id must be passed'})
+        if not (login and password and telegram):
+            raise ValidationError({'error': 'login, password and telegram must be passed'})
 
         token = MospolytechParser.authenticate_mospolytech(login=login, password=password)
 
@@ -40,5 +46,12 @@ class MospolytechUserViewSet(mixins.ListModelMixin,
         })
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        try:
+            bot.send_message(
+                telegram, "🤖 Регистрация пройдена успешно, теперь тебе полностью доступен функционал бота."
+            )
+        except ApiTelegramException:
+            logger.info('Can not send success registration message')
 
         return Response(serializer.data, status=200)

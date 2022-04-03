@@ -4,6 +4,7 @@ from rest_framework_nested import routers
 
 from .rest_api import ScheduledLessonViewSet, ScheduledLessonNoteViewSet
 
+app_name = 'schedule'
 router = DefaultRouter()
 router.register(r'scheduled-lesson-note', ScheduledLessonNoteViewSet, basename='scheduled-lesson-note')
 

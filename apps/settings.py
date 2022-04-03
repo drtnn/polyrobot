@@ -65,9 +65,11 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',)
+        'rest_framework.permissions.IsAuthenticated',
+    )
 }
 
 ROOT_URLCONF = 'apps.urls'
@@ -180,3 +182,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 FIELD_ENCRYPTION_KEY = os.environ.get('FIELD_ENCRYPTION_KEY', '')
 
 E_MOSPOLYTECH_ENDPOINT = os.getenv('MOSPOLYTECH_ACCOUNT_ENDPOINT', 'https://e.mospolytech.ru')
+
+BOT_TOKEN = os.getenv('BOT_TOKEN')

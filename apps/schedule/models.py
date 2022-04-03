@@ -49,7 +49,7 @@ class LessonType(BaseModel):
 
     class Meta:
         verbose_name = 'Тип занятия'
-        verbose_name_plural = 'Типы занятия'
+        verbose_name_plural = 'Типы занятий'
 
     def __str__(self):
         return self.title
