@@ -56,7 +56,7 @@ class LessonType(BaseModel):
 
 
 class Lesson(BaseModel):
-    title = models.CharField(verbose_name='Lesson Title', max_length=64)
+    title = models.CharField(verbose_name='Lesson Title', max_length=128)
     group = models.ForeignKey('mospolytech.Group', verbose_name='Group', on_delete=models.CASCADE)
     type = models.ForeignKey('schedule.LessonType', verbose_name='Lesson Type', on_delete=models.CASCADE)
     place = models.ForeignKey('schedule.LessonPlace', verbose_name='Lesson Place', on_delete=models.CASCADE)
