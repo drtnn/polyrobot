@@ -5,7 +5,7 @@ from .models import TelegramUser
 
 
 class TelegramUserSerializer(serializers.ModelSerializer):
-    preferences = UserPreferenceSerializer(many=True)
+    preferences = UserPreferenceSerializer(many=True, required=False)
 
     class Meta:
         model = TelegramUser
