@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from apps.schedule.models import LessonRoom, LessonPlace, LessonTeacher, LessonType, Lesson, ScheduledLesson, \
-    ScheduledLessonNote
+    ScheduledLessonNote, ScheduledLessonNotification
 
 
 class LessonRoomAdmin(admin.ModelAdmin):
@@ -50,6 +50,13 @@ class ScheduledLessonNoteAdmin(admin.ModelAdmin):
     list_filter = ('scheduled_lesson__lesson__title', 'scheduled_lesson__datetime', 'created_by')
 
 
+class ScheduledLessonUserNotificationAdmin(admin.ModelAdmin):
+    list_display = ('scheduled_lesson', 'telegram_user', 'notify_at')
+    search_fields = ('scheduled_lesson__lesson__title', 'telegram_user', 'notify_at')
+
+    list_filter = ('scheduled_lesson__lesson__title', 'telegram_user', 'notify_at')
+
+
 admin.site.register(LessonRoom, LessonRoomAdmin)
 admin.site.register(LessonPlace, LessonPlaceAdmin)
 admin.site.register(LessonTeacher, LessonTeacherAdmin)
@@ -57,3 +64,4 @@ admin.site.register(LessonType, LessonTypeAdmin)
 admin.site.register(Lesson, LessonAdmin)
 admin.site.register(ScheduledLesson, ScheduledLessonAdmin)
 admin.site.register(ScheduledLessonNote, ScheduledLessonNoteAdmin)
+admin.site.register(ScheduledLessonNotification, ScheduledLessonUserNotificationAdmin)

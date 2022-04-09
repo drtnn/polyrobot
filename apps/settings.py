@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'apps.telegram',
     'apps.schedule',
     'apps.s3',
+    'apps.preference',
 ]
 
 MIDDLEWARE = [

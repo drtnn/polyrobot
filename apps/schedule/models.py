@@ -92,7 +92,7 @@ class ScheduledLesson(BaseModel):
 
 class ScheduledLessonNote(BaseModel):
     scheduled_lesson = models.ForeignKey('schedule.ScheduledLesson', verbose_name='Scheduled Lesson',
-                                         on_delete=models.SET_NULL, blank=True, null=True)
+                                         related_name='notes', on_delete=models.SET_NULL, blank=True, null=True)
     text = models.TextField(verbose_name='Lesson Note Text', max_length=4096)
     files = models.ManyToManyField('s3.File', verbose_name='Lesson Note Files', related_name='scheduled_lesson_notes')
     created_by = models.ForeignKey('telegram.TelegramUser', verbose_name='Created by', on_delete=models.CASCADE,
@@ -108,3 +108,18 @@ class ScheduledLessonNote(BaseModel):
     @property
     def files_count(self):
         return str(self.files.all().count())
+
+
+class ScheduledLessonNotification(BaseModel):
+    scheduled_lesson = models.ForeignKey('schedule.ScheduledLesson', verbose_name='Scheduled Lesson',
+                                         related_name='user_notifications', on_delete=models.CASCADE)
+    telegram_user = models.ForeignKey('telegram.TelegramUser', verbose_name='Telegram User',
+                                      related_name='scheduled_lesson_notifications', on_delete=models.CASCADE)
+    notify_at = models.DateTimeField(verbose_name='Lesson DateTime')
+
+    class Meta:
+        verbose_name = 'Уведомление о начале занятия'
+        verbose_name_plural = 'Уведомления о начале занятия'
+
+    def __str__(self):
+        return str(self.scheduled_lesson)

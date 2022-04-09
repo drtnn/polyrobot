@@ -6,6 +6,7 @@ from telebot import TeleBot
 from telebot.apihelper import ApiTelegramException
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
+from apps.schedule.models import ScheduledLesson
 from apps.telegram.models import TelegramUser, TelegramKeyboard
 
 bot = TeleBot(token=settings.BOT_TOKEN, parse_mode="HTML")

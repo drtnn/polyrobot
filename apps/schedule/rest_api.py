@@ -6,9 +6,9 @@ from rest_framework.response import Response
 
 from apps.mospolytech.models import Group
 from apps.s3.models import File
-from apps.schedule.models import ScheduledLesson, ScheduledLessonNote
+from apps.schedule.models import ScheduledLesson, ScheduledLessonNote, ScheduledLessonNotification
 from apps.schedule.serializers import ScheduledLessonSerializer, ScheduledLessonNoteReadSerializer, \
-    ScheduledLessonNoteWriteSerializer
+    ScheduledLessonNoteWriteSerializer, ScheduledLessonNotificationSerializer
 from apps.schedule.utils import export_scheduled_lessons
 
 
@@ -20,21 +20,21 @@ class ScheduledLessonViewSet(mixins.ListModelMixin,
 
     def get_queryset(self):
         qs = self.queryset
-        date = self.request.query_params.get('date', None)
-        date_from = self.request.query_params.get('date_from', None)
-        date_to = self.request.query_params.get('date_to', None)
+        datetime = self.request.query_params.get('date', None)
+        datetime_from = self.request.query_params.get('datetime_from', None)
+        datetime_to = self.request.query_params.get('datetime_to', None)
 
         if 'telegram_pk' in self.kwargs:
             group = Group.objects.get(students__user__telegram_id=self.kwargs['telegram_pk'])
             qs = qs.filter(lesson__group=group)
 
-        if date:
-            qs = qs.filter(datetime__contains=date)
+        if datetime:
+            qs = qs.filter(datetime__contains=datetime)
         else:
-            if date_from:
-                qs = qs.filter(datetime__gte=date_from)
-            if date_to:
-                qs = qs.filter(datetime__lte=date_to)
+            if datetime_from:
+                qs = qs.filter(datetime__gte=datetime_from)
+            if datetime_to:
+                qs = qs.filter(datetime__lte=datetime_to)
         return qs
 
     @action(detail=True, methods=['POST'], url_path='add-note')
@@ -83,3 +83,25 @@ class ScheduledLessonNoteViewSet(viewsets.ModelViewSet):
         note.files.add(*File.objects.filter(id__in=files))
 
         return Response(ScheduledLessonNoteReadSerializer(instance=note).data, status=200)
+
+
+class ScheduledLessonNotificationViewSet(mixins.ListModelMixin,
+                                         mixins.RetrieveModelMixin,
+                                         viewsets.GenericViewSet):
+    serializer_class = ScheduledLessonNotificationSerializer
+    queryset = ScheduledLessonNotification.objects.all().order_by('notify_at')
+
+    def get_queryset(self):
+        qs = self.queryset
+        notify_from = self.request.query_params.get('notify_from', None)
+        notify_to = self.request.query_params.get('notify_to', None)
+
+        if 'scheduled_lesson_pk' in self.kwargs:
+            scheduled_lesson = ScheduledLesson.objects.get_or_none(id=self.kwargs['scheduled_lesson_pk'])
+            qs = qs.filter(scheduled_lesson=scheduled_lesson)
+
+        if notify_from:
+            qs = qs.filter(notify_at__gte=notify_from)
+        if notify_to:
+            qs = qs.filter(notify_at__lte=notify_to)
+        return qs

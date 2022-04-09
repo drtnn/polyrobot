@@ -9,9 +9,11 @@ from ics import Calendar, Event
 from rest_framework.exceptions import ValidationError
 
 from apps.mospolytech.models import Group, Student
+from apps.preference.constants import REMIND_IN_MINUTES
 from apps.schedule.constants import WEEKDAYS, RU_MONTHS_TO_EN
 from apps.schedule.models import ScheduledLesson, Lesson, LessonPlace, LessonTeacher, LessonType, LessonRoom, \
-    ScheduledLessonNote
+    ScheduledLessonNote, ScheduledLessonNotification
+from apps.telegram.models import TelegramUser
 
 
 def change_month_on_en(raw_datetime):
@@ -125,6 +127,23 @@ def save_schedule(group: Group, schedule: Union[Dict, List]):
         LessonRoom.objects.filter(lessons__isnull=True).delete()
 
 
+def create_scheduled_lesson_notifications():
+    scheduled_lesson_notifications_to_create = []
+    for telegram_user in TelegramUser.objects.filter(mospolytechuser__isnull=False):
+        group = telegram_user.mospolytechuser.student.group
+        remind_in_minutes = telegram_user.preferences.get(preference__slug=REMIND_IN_MINUTES).value
+
+        for scheduled_lesson in ScheduledLesson.objects.filter(lesson__group=group, datetime__lt=datetime.now()):
+            notify_at = scheduled_lesson.datetime - timedelta(minutes=remind_in_minutes)
+            scheduled_lesson_notifications_to_create.append(
+                ScheduledLessonNotification(
+                    scheduled_lesson=scheduled_lesson, telegram_user=telegram_user, notify_at=notify_at
+                )
+            )
+
+    ScheduledLessonNotification.objects.bulk_create(scheduled_lesson_notifications_to_create)
+
+
 @transaction.atomic
 def update_schedule():
     note_dict = [
@@ -152,6 +171,8 @@ def update_schedule():
                 if isinstance(session_schedule, dict) and session_schedule.get('status') != 'error':
                     save_schedule(group, session_schedule)
                 break
+
+    create_scheduled_lesson_notifications()
 
     for note in note_dict:
         note_object = note['note']

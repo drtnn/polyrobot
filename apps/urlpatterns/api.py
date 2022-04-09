@@ -5,4 +5,5 @@ urlpatterns = [
     path('', include('apps.telegram.urls')),
     path('', include('apps.s3.urls')),
     path('', include('apps.schedule.urls')),
+    path('', include('apps.preference.urls')),
 ]

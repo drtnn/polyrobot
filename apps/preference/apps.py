@@ -1,9 +1,9 @@
 from django.apps import AppConfig
 
 
-class TelegramConfig(AppConfig):
+class PreferenceConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'apps.telegram'
+    name = 'apps.preference'
 
     def ready(self):
-        import apps.telegram.signals
+        import apps.preference.signals
