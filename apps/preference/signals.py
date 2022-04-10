@@ -4,8 +4,9 @@ from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 
 from .constants import REMIND_IN_MINUTES
-from .models import UserPreference
+from .models import UserPreference, Preference
 from ..schedule.models import ScheduledLesson, ScheduledLessonNotification
+from ..telegram.models import TelegramUser
 
 
 def create_scheduled_lesson_notifications(instance: UserPreference):
@@ -27,13 +28,32 @@ def create_scheduled_lesson_notifications(instance: UserPreference):
     ScheduledLessonNotification.objects.bulk_create(scheduled_lesson_notifications_to_create)
 
 
+def create_user_preferences(instance: Preference):
+    user_preferences = []
+    for telegram_user in TelegramUser.objects.all():
+        user_preferences.append(
+            UserPreference(preference=instance, telegram_user=telegram_user, enabled=True, value=instance.default)
+        )
+    UserPreference.objects.bulk_create(user_preferences)
+
+
 @receiver([pre_save], sender=UserPreference)
-def pre_save_preference(sender, instance: UserPreference, **kwargs):
-    assert instance.value < instance.preference.max_value, "UserPreference Value is more than Preference"
+def pre_save_user_preference(sender, instance: UserPreference, **kwargs):
+    are_none = (instance.value is not None and instance.preference.max_value is not None)
+    are_not_none = (instance.value is None and instance.preference.max_value is None)
+    assert are_none or are_not_none, \
+        f"UserPreference Value must {'not ' if instance.preference.max_value is not None else ''}be None"
+
+    if instance.value and instance.preference.max_value:
+        assert instance.value < instance.preference.max_value, "UserPreference Value is more than Preference"
 
 
 @receiver([post_save], sender=UserPreference)
-def post_save_preference(sender, instance: UserPreference, **kwargs):
+def post_save_user_preference(sender, instance: UserPreference, **kwargs):
     if instance.preference.slug == REMIND_IN_MINUTES:
         create_scheduled_lesson_notifications(instance=instance)
 
+
+@receiver([post_save], sender=Preference)
+def post_save_preference(sender, instance: Preference, **kwargs):
+    create_user_preferences(instance=instance)

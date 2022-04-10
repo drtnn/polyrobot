@@ -24,5 +24,5 @@ def create_scheduled_lesson_notifications(instance: ScheduledLesson):
 @receiver([post_save], sender=ScheduledLesson)
 def post_save_scheduled_lesson(sender, instance: ScheduledLesson, **kwargs):
     instance.user_notifications.all().delete()
-    if instance.datetime > datetime.now(tz=pytz.UTC):
+    if instance.datetime > datetime.now():
         create_scheduled_lesson_notifications(instance=instance)

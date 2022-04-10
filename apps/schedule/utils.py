@@ -9,11 +9,9 @@ from ics import Calendar, Event
 from rest_framework.exceptions import ValidationError
 
 from apps.mospolytech.models import Group, Student
-from apps.preference.constants import REMIND_IN_MINUTES
 from apps.schedule.constants import WEEKDAYS, RU_MONTHS_TO_EN
-from apps.schedule.models import ScheduledLesson, Lesson, LessonPlace, LessonTeacher, LessonType, LessonRoom, \
-    ScheduledLessonNote, ScheduledLessonNotification
-from apps.telegram.models import TelegramUser
+from apps.schedule.models import ScheduledLesson, Lesson, LessonPlace, LessonTeacher, LessonType, LessonRoom
+from apps.telegram.bot import notify_groups_about_new_schedule
 
 
 def change_month_on_en(raw_datetime):
@@ -36,8 +34,9 @@ def get_nearest_date(raw_date: str) -> date:
 
 def schedule_repeated_lessons(
         repeated_lessons: Dict[str, list], first_date: date, last_date: date
-) -> list:
-    schedule_lessons = []
+) -> (list, bool):
+    schedule_lesson_ids = []
+    new_scheduled_lessons_created = False
     today = first_date
 
     while today <= last_date:
@@ -45,13 +44,16 @@ def schedule_repeated_lessons(
             if today.weekday() == weekday:
                 for index, lesson_dict in enumerate(lessons):
                     raw_time = lesson_dict["time"].split(" - ")[0].replace(" ", "")
-                    raw_datetime = f'{today.strftime("%Y-%m-%d")} {raw_time} +0300'
-                    date_object = datetime.strptime(raw_datetime[:-6], '%Y-%m-%d %H:%M').date()
-                    if lesson_dict['from_date'] <= date_object <= lesson_dict['to_date']:
-                        schedule_lessons.append(ScheduledLesson(lesson=lesson_dict['lesson'], datetime=raw_datetime))
+                    raw_datetime = f'{today.strftime("%Y-%m-%d")} {raw_time}'
+                    datetime_object = datetime.strptime(raw_datetime, '%Y-%m-%d %H:%M')
+                    if lesson_dict['from_date'] <= datetime_object.date() <= lesson_dict['to_date']:
+                        schedule_lesson, created = ScheduledLesson.objects.get_or_create(lesson=lesson_dict['lesson'],
+                                                                                         datetime=datetime_object)
+                        new_scheduled_lessons_created |= created
+                        schedule_lesson_ids.append(schedule_lesson.id)
         today += timedelta(days=1)
 
-    return schedule_lessons
+    return schedule_lesson_ids
 
 
 def save_lesson_place(lesson: dict) -> LessonPlace:
@@ -70,9 +72,10 @@ def save_lesson_place(lesson: dict) -> LessonPlace:
     return lesson_place
 
 
-def save_schedule(group: Group, schedule: Union[Dict, List]):
+def save_schedule(group: Group, schedule: Union[Dict, List]) -> bool:
     if schedule and isinstance(schedule, dict):
-        scheduled_lessons = []
+        scheduled_lesson_ids = []
+        new_scheduled_lessons_created = False
         repeated_lessons = defaultdict(list)
         first_date = date.today()
         last_date = date.today()
@@ -99,13 +102,19 @@ def save_schedule(group: Group, schedule: Union[Dict, List]):
 
                 if re.fullmatch(r'\d{4}-\d\d-\d\d', raw_date):
                     # Not repeated lessons
-                    raw_datetime = f'{raw_date} {lesson["timeInterval"].split(" - ")[0].replace(" ", "")} +0300'
-                    scheduled_lessons.append(ScheduledLesson(lesson=lesson_object, datetime=raw_datetime))
+                    raw_datetime = f'{raw_date} {lesson["timeInterval"].split(" - ")[0].replace(" ", "")}'
+                    datetime_object = datetime.strptime(raw_datetime, '%Y-%m-%d %H:%M')
+                    scheduled_lesson, created = ScheduledLesson.objects.get_or_create(lesson=lesson_object,
+                                                                                      datetime=datetime_object)
+                    new_scheduled_lessons_created |= created
+                    scheduled_lesson_ids.append(scheduled_lesson.id)
                 elif re.fullmatch(r'\d\d \w{3}', lesson['dateInterval']):
                     # Not repeated lessons
-                    scheduled_lessons.append(
-                        ScheduledLesson(lesson=lesson_object, datetime=get_nearest_date(lesson['dateInterval']))
+                    scheduled_lesson, created = ScheduledLesson.objects.get_or_create(
+                        lesson=lesson_object, datetime=get_nearest_date(lesson['dateInterval'])
                     )
+                    new_scheduled_lessons_created |= created
+                    scheduled_lesson_ids.append(scheduled_lesson.id)
                 else:
                     # Repeated lessons
                     weekday = WEEKDAYS[raw_date]
@@ -117,48 +126,33 @@ def save_schedule(group: Group, schedule: Union[Dict, List]):
                     repeated_lessons[weekday].append({'from_date': from_date, 'to_date': to_date,
                                                       'time': lesson["timeInterval"], 'lesson': lesson_object})
 
-        scheduled_lessons += schedule_repeated_lessons(repeated_lessons, first_date, last_date)
+        scheduled_lesson_ids += schedule_repeated_lessons(repeated_lessons, first_date, last_date)
 
-        ScheduledLesson.objects.bulk_create(scheduled_lessons)
+        ScheduledLesson.objects.filter(lesson__group=group).exclude(id__in=scheduled_lesson_ids).delete()
         Lesson.objects.filter(scheduledlesson__isnull=True).delete()
         LessonPlace.objects.filter(lesson__isnull=True).delete()
         LessonType.objects.filter(lesson__isnull=True).delete()
         LessonTeacher.objects.filter(lessons__isnull=True).delete()
         LessonRoom.objects.filter(lessons__isnull=True).delete()
 
-
-def create_scheduled_lesson_notifications():
-    scheduled_lesson_notifications_to_create = []
-    for telegram_user in TelegramUser.objects.filter(mospolytechuser__isnull=False):
-        group = telegram_user.mospolytechuser.student.group
-        remind_in_minutes = telegram_user.preferences.get(preference__slug=REMIND_IN_MINUTES).value
-
-        for scheduled_lesson in ScheduledLesson.objects.filter(lesson__group=group, datetime__lt=datetime.now()):
-            notify_at = scheduled_lesson.datetime - timedelta(minutes=remind_in_minutes)
-            scheduled_lesson_notifications_to_create.append(
-                ScheduledLessonNotification(
-                    scheduled_lesson=scheduled_lesson, telegram_user=telegram_user, notify_at=notify_at
-                )
-            )
-
-    ScheduledLessonNotification.objects.bulk_create(scheduled_lesson_notifications_to_create)
+        return bool(new_scheduled_lessons_created)
 
 
 @transaction.atomic
 def update_schedule():
-    note_dict = [
-        {'lesson_id': note.scheduled_lesson.lesson.id, 'datetime': note.scheduled_lesson.datetime, 'note': note}
-        for note in ScheduledLessonNote.objects.all()
-    ]
-    ScheduledLesson.objects.all().delete()
-
     group_users = defaultdict(list)
+    groups_to_notify = []
+
     for student in Student.objects.all():
         group_users[student.group.number].append(student.user)
 
     groups = {group.number: group for group in Group.objects.filter(number__in=group_users.keys())}
 
     for group_number, group in groups.items():
+        is_new_schedule = False
+        is_new_session_schedule = False
+        parsed = False
+
         for actual_user in group_users.pop(group_number):
             try:
                 schedule = actual_user.schedule(is_session=False)
@@ -167,21 +161,20 @@ def update_schedule():
                 continue
             else:
                 if isinstance(schedule, dict) and schedule.get('status') != 'error':
-                    save_schedule(group, schedule)
+                    is_new_schedule = save_schedule(group, schedule)
                 if isinstance(session_schedule, dict) and session_schedule.get('status') != 'error':
-                    save_schedule(group, session_schedule)
+                    is_new_session_schedule = save_schedule(group, session_schedule)
+
+                parsed = True
                 break
 
-    create_scheduled_lesson_notifications()
+        if not parsed:
+            ScheduledLesson.objects.filter(lesson__group=group).delete()
 
-    for note in note_dict:
-        note_object = note['note']
-        scheduled_lesson = ScheduledLesson.objects.get_or_none(lesson__id=note['lesson_id'], datetime=note['datetime'])
-        if scheduled_lesson:
-            note_object.scheduled_lesson = scheduled_lesson
-            note_object.save()
-        else:
-            note_object.delete()
+        if is_new_schedule or is_new_session_schedule:
+            groups_to_notify.append(group)
+
+    notify_groups_about_new_schedule(groups=groups_to_notify)
 
 
 def export_scheduled_lessons(scheduled_lessons: QuerySet[ScheduledLesson]) -> Calendar:
