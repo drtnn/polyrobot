@@ -6,7 +6,7 @@ from apps.core.models import BaseModel
 
 
 class LessonRoom(BaseModel):
-    number = models.CharField(verbose_name='Lesson Room Number', max_length=16)
+    number = models.CharField(verbose_name='Lesson Room Number', max_length=32)
 
     class Meta:
         verbose_name = 'Кабинет'
@@ -17,7 +17,7 @@ class LessonRoom(BaseModel):
 
 
 class LessonPlace(BaseModel):
-    title = models.CharField(verbose_name='Lesson Place Title', max_length=64)
+    title = models.CharField(verbose_name='Lesson Place Title', max_length=128)
     rooms = models.ManyToManyField('schedule.LessonRoom', verbose_name='Lesson Rooms', related_name='lessons')
     link = models.CharField(verbose_name='Lesson Place Link', max_length=128, null=True, blank=True)
 
@@ -34,7 +34,7 @@ class LessonPlace(BaseModel):
 
 
 class LessonTeacher(BaseModel):
-    full_name = models.CharField(verbose_name='Lesson Teacher', max_length=48)
+    full_name = models.CharField(verbose_name='Lesson Teacher', max_length=64)
 
     class Meta:
         verbose_name = 'Преподаватель'

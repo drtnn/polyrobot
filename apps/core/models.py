@@ -14,6 +14,18 @@ class GetOrNoneManager(models.Manager):
         except self.model.DoesNotExist:
             return None
 
+    # TODO: Временная реализация
+    def get_first_or_create(self, delete_duplicates=False, *args, **kwargs):
+        qs = self.filter(*args, **kwargs)
+        if qs:
+            obj = qs.first()
+
+            if delete_duplicates:
+                qs.exclude(id=obj.id).delete()
+            return obj, False
+        else:
+            return self.create(*args, **kwargs), True
+
 
 class BaseModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

@@ -1,3 +1,4 @@
+import logging
 import re
 from collections import defaultdict
 from datetime import date, datetime, timedelta
@@ -13,10 +14,25 @@ from apps.schedule.constants import WEEKDAYS, RU_MONTHS_TO_EN
 from apps.schedule.models import ScheduledLesson, Lesson, LessonPlace, LessonTeacher, LessonType, LessonRoom
 from apps.telegram.bot import notify_groups_about_new_schedule
 
+logger = logging.getLogger(__name__)
+
 
 def change_month_on_en(raw_datetime):
     month = raw_datetime.split(' ')[1]
     return raw_datetime.replace(month, RU_MONTHS_TO_EN[month])
+
+
+def get_nearest_datetime(raw_date: str, time_interval: str) -> date:
+    raw_date = change_month_on_en(raw_date)
+    now = datetime.now()
+    curr_year = datetime.now().year
+    date_list = {
+        datetime.strptime(f'{raw_date} {curr_year - 1} {time_interval}', '%d %b %Y %H:%M'),
+        datetime.strptime(f'{raw_date} {curr_year} {time_interval}', '%d %b %Y %H:%M'),
+        datetime.strptime(f'{raw_date} {curr_year + 1} {time_interval}', '%d %b %Y %H:%M'),
+    }
+
+    return min(date_list, key=lambda x: abs(x - now))
 
 
 def get_nearest_date(raw_date: str) -> date:
@@ -47,10 +63,11 @@ def schedule_repeated_lessons(
                     raw_datetime = f'{today.strftime("%Y-%m-%d")} {raw_time}'
                     datetime_object = datetime.strptime(raw_datetime, '%Y-%m-%d %H:%M')
                     if lesson_dict['from_date'] <= datetime_object.date() <= lesson_dict['to_date']:
-                        schedule_lesson, created = ScheduledLesson.objects.get_or_create(lesson=lesson_dict['lesson'],
-                                                                                         datetime=datetime_object)
+                        scheduled_lesson, created = ScheduledLesson.objects.get_first_or_create(
+                            delete_duplicates=True, lesson=lesson_dict['lesson'], datetime=datetime_object
+                        )
                         new_scheduled_lessons_created |= created
-                        schedule_lesson_ids.append(schedule_lesson.id)
+                        schedule_lesson_ids.append(scheduled_lesson.id)
         today += timedelta(days=1)
 
     return schedule_lesson_ids
@@ -84,8 +101,8 @@ def save_schedule(group: Group, schedule: Union[Dict, List]) -> bool:
             lessons_list = lessons['lessons']
 
             for lesson in lessons_list:
-                name = lesson['name'].split(' (')
-                title, type = name[0], name[1][:-1]
+                name = lesson['name'].rsplit('(', 1)
+                title, type = name[0].strip(), name[1][:-1].strip()
 
                 lesson_teachers = [LessonTeacher.objects.get_or_create(full_name=teacher)[0].id for teacher in
                                    lesson['teachers']]
@@ -104,14 +121,17 @@ def save_schedule(group: Group, schedule: Union[Dict, List]) -> bool:
                     # Not repeated lessons
                     raw_datetime = f'{raw_date} {lesson["timeInterval"].split(" - ")[0].replace(" ", "")}'
                     datetime_object = datetime.strptime(raw_datetime, '%Y-%m-%d %H:%M')
-                    scheduled_lesson, created = ScheduledLesson.objects.get_or_create(lesson=lesson_object,
-                                                                                      datetime=datetime_object)
+                    scheduled_lesson, created = ScheduledLesson.objects.get_first_or_create(
+                        delete_duplicates=True, lesson=lesson_object, datetime=datetime_object
+                    )
                     new_scheduled_lessons_created |= created
                     scheduled_lesson_ids.append(scheduled_lesson.id)
                 elif re.fullmatch(r'\d\d \w{3}', lesson['dateInterval']):
                     # Not repeated lessons
-                    scheduled_lesson, created = ScheduledLesson.objects.get_or_create(
-                        lesson=lesson_object, datetime=get_nearest_date(lesson['dateInterval'])
+                    start_time = lesson["timeInterval"].split(" - ")[0].replace(" ", "")
+                    scheduled_lesson, created = ScheduledLesson.objects.get_first_or_create(
+                        delete_duplicates=True, lesson=lesson_object,
+                        datetime=get_nearest_datetime(lesson['dateInterval'], start_time)
                     )
                     new_scheduled_lessons_created |= created
                     scheduled_lesson_ids.append(scheduled_lesson.id)
@@ -149,6 +169,8 @@ def update_schedule():
     groups = {group.number: group for group in Group.objects.filter(number__in=group_users.keys())}
 
     for group_number, group in groups.items():
+        print(f'[UPDATE-SCHEDULE]: {group_number}')
+
         is_new_schedule = False
         is_new_session_schedule = False
         parsed = False

@@ -7,12 +7,12 @@ from apps.schedule.models import ScheduledLesson
 
 
 class MospolytechUser(Timestampable):
-    name = models.CharField(verbose_name='Name', max_length=16)
-    surname = models.CharField(verbose_name='Surname', max_length=16)
-    patronymic = models.CharField(verbose_name='Patronymic', max_length=16, null=True, blank=True)
+    name = models.CharField(verbose_name='Name', max_length=32)
+    surname = models.CharField(verbose_name='Surname', max_length=32)
+    patronymic = models.CharField(verbose_name='Patronymic', max_length=32, null=True, blank=True)
 
-    login = models.CharField(verbose_name='Mospolytech Login', max_length=32)
-    password = EncryptedCharField(verbose_name='Mospolytech Password', max_length=128)
+    login = models.CharField(verbose_name='Mospolytech Login', max_length=64)
+    password = EncryptedCharField(verbose_name='Mospolytech Password', max_length=256)
     cached_token = EncryptedCharField(verbose_name='Cached Mospolytech Token', max_length=256)
 
     telegram = models.OneToOneField('telegram.TelegramUser', verbose_name='Telegram User', on_delete=models.CASCADE)
