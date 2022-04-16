@@ -12,9 +12,6 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 import sys
 
-import boto3
-import dj_database_url
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -30,7 +27,12 @@ SECRET_KEY = 'django-insecure-7=t$9s*bhv@=4j6t74v=$8dsrf&%$yiw7sdx1a@zrf3jr-x$58
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ENVIRONMENT = os.getenv("ENVIRONMENT")
+
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+
+if ENVIRONMENT != 'DEVELOPMENT':
+    CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS').split(',')
 
 # Application definition
 
@@ -94,8 +96,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'apps.wsgi.application'
 
-ENVIRONMENT = os.getenv("ENVIRONMENT")
-
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -105,10 +105,15 @@ DB_PASSWORD = os.getenv('DB_PASSWORD', 'postgres')
 DB_HOST = os.getenv('DB_HOST', 'localhost')
 DB_PORT = int(os.getenv('DB_PORT', '5432'))
 
-DATABASE_URL = f'postgres://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
-
 DATABASES = {
-    'default': dj_database_url.config(default=DATABASE_URL)
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': DB_NAME,
+        'USER': DB_USERNAME,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
+    }
 }
 
 # Password validation
