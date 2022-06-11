@@ -1,0 +1,1616 @@
+openapi: 3.0.2
+info:
+  title: ''
+  version: ''
+paths:
+  /api/mospolytech/:
+    get:
+      operationId: listMospolytechUsers
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MospolytechUser'
+          description: ''
+      tags:
+      - api
+  /api/mospolytech/{id}/:
+    get:
+      operationId: retrieveMospolytechUser
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u041F\u043E\u043B\u044C\u0437\
+          \u043E\u0432\u0430\u0442\u0435\u043B\u044C."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MospolytechUser'
+          description: ''
+      tags:
+      - api
+  /api/telegram/:
+    get:
+      operationId: listTelegramUsers
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TelegramUser'
+          description: ''
+      tags:
+      - api
+    post:
+      operationId: createTelegramUser
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TelegramUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TelegramUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TelegramUser'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramUser'
+          description: ''
+      tags:
+      - api
+  /api/telegram/admin/:
+    get:
+      operationId: adminTelegramUser
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramUser'
+          description: ''
+      tags:
+      - api
+  /api/telegram/{id}/:
+    get:
+      operationId: retrieveTelegramUser
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A unique value identifying this \u041F\u043E\u043B\u044C\u0437\
+          \u043E\u0432\u0430\u0442\u0435\u043B\u044C."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramUser'
+          description: ''
+      tags:
+      - api
+    put:
+      operationId: updateTelegramUser
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A unique value identifying this \u041F\u043E\u043B\u044C\u0437\
+          \u043E\u0432\u0430\u0442\u0435\u043B\u044C."
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TelegramUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TelegramUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TelegramUser'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramUser'
+          description: ''
+      tags:
+      - api
+    patch:
+      operationId: partialUpdateTelegramUser
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A unique value identifying this \u041F\u043E\u043B\u044C\u0437\
+          \u043E\u0432\u0430\u0442\u0435\u043B\u044C."
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TelegramUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TelegramUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TelegramUser'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramUser'
+          description: ''
+      tags:
+      - api
+    delete:
+      operationId: destroyTelegramUser
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A unique value identifying this \u041F\u043E\u043B\u044C\u0437\
+          \u043E\u0432\u0430\u0442\u0435\u043B\u044C."
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - api
+  /api/telegram/{id}/academic-performance/:
+    get:
+      operationId: academicPerformanceTelegramUser
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A unique value identifying this \u041F\u043E\u043B\u044C\u0437\
+          \u043E\u0432\u0430\u0442\u0435\u043B\u044C."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramUser'
+          description: ''
+      tags:
+      - api
+  /api/telegram/{id}/payments/:
+    get:
+      operationId: paymentsTelegramUser
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A unique value identifying this \u041F\u043E\u043B\u044C\u0437\
+          \u043E\u0432\u0430\u0442\u0435\u043B\u044C."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramUser'
+          description: ''
+      tags:
+      - api
+  /api/telegram/{id}/profile/:
+    get:
+      operationId: profileTelegramUser
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A unique value identifying this \u041F\u043E\u043B\u044C\u0437\
+          \u043E\u0432\u0430\u0442\u0435\u043B\u044C."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramUser'
+          description: ''
+      tags:
+      - api
+  /api/telegram/{id}/schedule/:
+    get:
+      operationId: scheduleTelegramUser
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A unique value identifying this \u041F\u043E\u043B\u044C\u0437\
+          \u043E\u0432\u0430\u0442\u0435\u043B\u044C."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramUser'
+          description: ''
+      tags:
+      - api
+  /api/telegram/{id}/session-schedule/:
+    get:
+      operationId: sessionScheduleTelegramUser
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A unique value identifying this \u041F\u043E\u043B\u044C\u0437\
+          \u043E\u0432\u0430\u0442\u0435\u043B\u044C."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelegramUser'
+          description: ''
+      tags:
+      - api
+  /api/telegram/{telegram_pk}/scheduled-lesson/:
+    get:
+      operationId: listScheduledLessons
+      description: ''
+      parameters:
+      - name: telegram_pk
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScheduledLesson'
+          description: ''
+      tags:
+      - api
+  /api/telegram/{telegram_pk}/scheduled-lesson/export/:
+    get:
+      operationId: exportScheduledLesson
+      description: ''
+      parameters:
+      - name: telegram_pk
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledLesson'
+          description: ''
+      tags:
+      - api
+  /api/telegram/{telegram_pk}/scheduled-lesson/{id}/:
+    get:
+      operationId: retrieveScheduledLesson
+      description: ''
+      parameters:
+      - name: telegram_pk
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u0417\u0430\u043F\u043B\u0430\
+          \u043D\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u043E\u0435 \u0437\u0430\
+          \u043D\u044F\u0442\u0438\u0435."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledLesson'
+          description: ''
+      tags:
+      - api
+  /api/telegram/{telegram_pk}/preference/:
+    get:
+      operationId: listUserPreferences
+      description: ''
+      parameters:
+      - name: telegram_pk
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserPreference'
+          description: ''
+      tags:
+      - api
+  /api/telegram/{telegram_pk}/preference/{id}/:
+    get:
+      operationId: retrieveUserPreference
+      description: ''
+      parameters:
+      - name: telegram_pk
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u041F\u043E\u043B\u044C\u0437\
+          \u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u0430\u044F \u043D\
+          \u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0430."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreference'
+          description: ''
+      tags:
+      - api
+    put:
+      operationId: updateUserPreference
+      description: ''
+      parameters:
+      - name: telegram_pk
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u041F\u043E\u043B\u044C\u0437\
+          \u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u0430\u044F \u043D\
+          \u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0430."
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreference'
+          description: ''
+      tags:
+      - api
+    patch:
+      operationId: partialUpdateUserPreference
+      description: ''
+      parameters:
+      - name: telegram_pk
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u041F\u043E\u043B\u044C\u0437\
+          \u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u0430\u044F \u043D\
+          \u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0430."
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreference'
+          description: ''
+      tags:
+      - api
+  /api/file/{id}/:
+    get:
+      operationId: retrieveFile
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u0424\u0430\u0439\u043B."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+          description: ''
+      tags:
+      - api
+  /api/file/{id}/download/:
+    get:
+      operationId: downloadFile
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u0424\u0430\u0439\u043B."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+          description: ''
+      tags:
+      - api
+  /api/scheduled-lesson-note/:
+    get:
+      operationId: listScheduledLessonNotes
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScheduledLessonNoteRead'
+          description: ''
+      tags:
+      - api
+    post:
+      operationId: createScheduledLessonNote
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteWrite'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledLessonNoteWrite'
+          description: ''
+      tags:
+      - api
+  /api/scheduled-lesson-note/{id}/:
+    get:
+      operationId: retrieveScheduledLessonNote
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u0417\u0430\u043C\u0435\u0442\
+          \u043A\u0430 \u043A \u0437\u0430\u043F\u043B\u0430\u043D\u0438\u0440\u043E\
+          \u0432\u0430\u043D\u043D\u043E\u043C\u0443 \u0437\u0430\u043D\u044F\u0442\
+          \u0438\u044E."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledLessonNoteRead'
+          description: ''
+      tags:
+      - api
+    put:
+      operationId: updateScheduledLessonNote
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u0417\u0430\u043C\u0435\u0442\
+          \u043A\u0430 \u043A \u0437\u0430\u043F\u043B\u0430\u043D\u0438\u0440\u043E\
+          \u0432\u0430\u043D\u043D\u043E\u043C\u0443 \u0437\u0430\u043D\u044F\u0442\
+          \u0438\u044E."
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteWrite'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledLessonNoteWrite'
+          description: ''
+      tags:
+      - api
+    patch:
+      operationId: partialUpdateScheduledLessonNote
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u0417\u0430\u043C\u0435\u0442\
+          \u043A\u0430 \u043A \u0437\u0430\u043F\u043B\u0430\u043D\u0438\u0440\u043E\
+          \u0432\u0430\u043D\u043D\u043E\u043C\u0443 \u0437\u0430\u043D\u044F\u0442\
+          \u0438\u044E."
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteRead'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteRead'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteRead'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledLessonNoteRead'
+          description: ''
+      tags:
+      - api
+    delete:
+      operationId: destroyScheduledLessonNote
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u0417\u0430\u043C\u0435\u0442\
+          \u043A\u0430 \u043A \u0437\u0430\u043F\u043B\u0430\u043D\u0438\u0440\u043E\
+          \u0432\u0430\u043D\u043D\u043E\u043C\u0443 \u0437\u0430\u043D\u044F\u0442\
+          \u0438\u044E."
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - api
+  /api/scheduled-lesson-notification/:
+    get:
+      operationId: listScheduledLessonNotifications
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScheduledLessonNotification'
+          description: ''
+      tags:
+      - api
+  /api/scheduled-lesson-notification/{id}/:
+    get:
+      operationId: retrieveScheduledLessonNotification
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u0423\u0432\u0435\u0434\u043E\
+          \u043C\u043B\u0435\u043D\u0438\u0435 \u043E \u043D\u0430\u0447\u0430\u043B\
+          \u0435 \u0437\u0430\u043D\u044F\u0442\u0438\u044F."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledLessonNotification'
+          description: ''
+      tags:
+      - api
+  /api/scheduled-lesson/:
+    get:
+      operationId: listScheduledLessons
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScheduledLesson'
+          description: ''
+      tags:
+      - api
+  /api/scheduled-lesson/export/:
+    get:
+      operationId: exportScheduledLesson
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledLesson'
+          description: ''
+      tags:
+      - api
+  /api/scheduled-lesson/{id}/:
+    get:
+      operationId: retrieveScheduledLesson
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u0417\u0430\u043F\u043B\u0430\
+          \u043D\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u043E\u0435 \u0437\u0430\
+          \u043D\u044F\u0442\u0438\u0435."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledLesson'
+          description: ''
+      tags:
+      - api
+  /api/scheduled-lesson/{scheduled_lesson_pk}/note/:
+    get:
+      operationId: listScheduledLessonNotes
+      description: ''
+      parameters:
+      - name: scheduled_lesson_pk
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScheduledLessonNoteRead'
+          description: ''
+      tags:
+      - api
+    post:
+      operationId: createScheduledLessonNote
+      description: ''
+      parameters:
+      - name: scheduled_lesson_pk
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteWrite'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledLessonNoteWrite'
+          description: ''
+      tags:
+      - api
+  /api/scheduled-lesson/{scheduled_lesson_pk}/note/{id}/:
+    get:
+      operationId: retrieveScheduledLessonNote
+      description: ''
+      parameters:
+      - name: scheduled_lesson_pk
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u0417\u0430\u043C\u0435\u0442\
+          \u043A\u0430 \u043A \u0437\u0430\u043F\u043B\u0430\u043D\u0438\u0440\u043E\
+          \u0432\u0430\u043D\u043D\u043E\u043C\u0443 \u0437\u0430\u043D\u044F\u0442\
+          \u0438\u044E."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledLessonNoteRead'
+          description: ''
+      tags:
+      - api
+    put:
+      operationId: updateScheduledLessonNote
+      description: ''
+      parameters:
+      - name: scheduled_lesson_pk
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u0417\u0430\u043C\u0435\u0442\
+          \u043A\u0430 \u043A \u0437\u0430\u043F\u043B\u0430\u043D\u0438\u0440\u043E\
+          \u0432\u0430\u043D\u043D\u043E\u043C\u0443 \u0437\u0430\u043D\u044F\u0442\
+          \u0438\u044E."
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteWrite'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledLessonNoteWrite'
+          description: ''
+      tags:
+      - api
+    patch:
+      operationId: partialUpdateScheduledLessonNote
+      description: ''
+      parameters:
+      - name: scheduled_lesson_pk
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u0417\u0430\u043C\u0435\u0442\
+          \u043A\u0430 \u043A \u0437\u0430\u043F\u043B\u0430\u043D\u0438\u0440\u043E\
+          \u0432\u0430\u043D\u043D\u043E\u043C\u0443 \u0437\u0430\u043D\u044F\u0442\
+          \u0438\u044E."
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteRead'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteRead'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteRead'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledLessonNoteRead'
+          description: ''
+      tags:
+      - api
+    delete:
+      operationId: destroyScheduledLessonNote
+      description: ''
+      parameters:
+      - name: scheduled_lesson_pk
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u0417\u0430\u043C\u0435\u0442\
+          \u043A\u0430 \u043A \u0437\u0430\u043F\u043B\u0430\u043D\u0438\u0440\u043E\
+          \u0432\u0430\u043D\u043D\u043E\u043C\u0443 \u0437\u0430\u043D\u044F\u0442\
+          \u0438\u044E."
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - api
+  /api/scheduled-lesson/{scheduled_lesson_pk}/notification/:
+    get:
+      operationId: listScheduledLessonNotifications
+      description: ''
+      parameters:
+      - name: scheduled_lesson_pk
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScheduledLessonNotification'
+          description: ''
+      tags:
+      - api
+  /api/scheduled-lesson/{scheduled_lesson_pk}/notification/{id}/:
+    get:
+      operationId: retrieveScheduledLessonNotification
+      description: ''
+      parameters:
+      - name: scheduled_lesson_pk
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u0423\u0432\u0435\u0434\u043E\
+          \u043C\u043B\u0435\u043D\u0438\u0435 \u043E \u043D\u0430\u0447\u0430\u043B\
+          \u0435 \u0437\u0430\u043D\u044F\u0442\u0438\u044F."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledLessonNotification'
+          description: ''
+      tags:
+      - api
+  /api/user-preference/:
+    get:
+      operationId: listUserPreferences
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserPreference'
+          description: ''
+      tags:
+      - api
+  /api/user-preference/{id}/:
+    get:
+      operationId: retrieveUserPreference
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u041F\u043E\u043B\u044C\u0437\
+          \u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u0430\u044F \u043D\
+          \u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0430."
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreference'
+          description: ''
+      tags:
+      - api
+    put:
+      operationId: updateUserPreference
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u041F\u043E\u043B\u044C\u0437\
+          \u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u0430\u044F \u043D\
+          \u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0430."
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreference'
+          description: ''
+      tags:
+      - api
+    patch:
+      operationId: partialUpdateUserPreference
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u041F\u043E\u043B\u044C\u0437\
+          \u043E\u0432\u0430\u0442\u0435\u043B\u044C\u0441\u043A\u0430\u044F \u043D\
+          \u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0430."
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreference'
+          description: ''
+      tags:
+      - api
+  /api/mospolytech/login-to-mospolytech/:
+    post:
+      operationId: loginToMospolytechMospolytechUser
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MospolytechUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MospolytechUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MospolytechUser'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MospolytechUser'
+          description: ''
+      tags:
+      - api
+  /api/telegram/{telegram_pk}/scheduled-lesson/{id}/add-note/:
+    post:
+      operationId: addNoteScheduledLesson
+      description: ''
+      parameters:
+      - name: telegram_pk
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u0417\u0430\u043F\u043B\u0430\
+          \u043D\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u043E\u0435 \u0437\u0430\
+          \u043D\u044F\u0442\u0438\u0435."
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduledLesson'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ScheduledLesson'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ScheduledLesson'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledLesson'
+          description: ''
+      tags:
+      - api
+  /api/file/:
+    post:
+      operationId: createFile
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/File'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/File'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/File'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+          description: ''
+      tags:
+      - api
+  /api/scheduled-lesson-note/{id}/add-file/:
+    post:
+      operationId: addFileScheduledLessonNote
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u0417\u0430\u043C\u0435\u0442\
+          \u043A\u0430 \u043A \u0437\u0430\u043F\u043B\u0430\u043D\u0438\u0440\u043E\
+          \u0432\u0430\u043D\u043D\u043E\u043C\u0443 \u0437\u0430\u043D\u044F\u0442\
+          \u0438\u044E."
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteRead'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteRead'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteRead'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledLessonNoteRead'
+          description: ''
+      tags:
+      - api
+  /api/scheduled-lesson/{id}/add-note/:
+    post:
+      operationId: addNoteScheduledLesson
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u0417\u0430\u043F\u043B\u0430\
+          \u043D\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u043E\u0435 \u0437\u0430\
+          \u043D\u044F\u0442\u0438\u0435."
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduledLesson'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ScheduledLesson'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ScheduledLesson'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledLesson'
+          description: ''
+      tags:
+      - api
+  /api/scheduled-lesson/{scheduled_lesson_pk}/note/{id}/add-file/:
+    post:
+      operationId: addFileScheduledLessonNote
+      description: ''
+      parameters:
+      - name: scheduled_lesson_pk
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: "A UUID string identifying this \u0417\u0430\u043C\u0435\u0442\
+          \u043A\u0430 \u043A \u0437\u0430\u043F\u043B\u0430\u043D\u0438\u0440\u043E\
+          \u0432\u0430\u043D\u043D\u043E\u043C\u0443 \u0437\u0430\u043D\u044F\u0442\
+          \u0438\u044E."
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteRead'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteRead'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ScheduledLessonNoteRead'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledLessonNoteRead'
+          description: ''
+      tags:
+      - api
+components:
+  schemas:
+    MospolytechUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        login:
+          type: string
+          maxLength: 64
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 256
+        cached_token:
+          type: string
+          writeOnly: true
+          maxLength: 256
+        telegram:
+          type: string
+        name:
+          type: string
+        surname:
+          type: string
+        patronymic:
+          type: string
+      required:
+      - login
+      - password
+      - cached_token
+      - telegram
+    TelegramUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        username:
+          type: string
+          nullable: true
+          maxLength: 32
+        full_name:
+          type: string
+          maxLength: 64
+        is_admin:
+          type: boolean
+        preferences:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                readOnly: true
+              slug:
+                type: string
+              enabled:
+                type: boolean
+              value:
+                type: integer
+                maximum: 32767
+                nullable: true
+                minimum: 0
+              max_value:
+                type: integer
+            required:
+            - slug
+            - enabled
+            - max_value
+      required:
+      - id
+      - full_name
+    ScheduledLesson:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        lesson:
+          type: object
+          properties:
+            title:
+              type: string
+              maxLength: 128
+            group:
+              type: string
+            type:
+              type: string
+            place:
+              type: object
+              properties:
+                title:
+                  type: string
+                  maxLength: 128
+                link:
+                  type: string
+                  nullable: true
+                  maxLength: 128
+                rooms:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      number:
+                        type: string
+                        maxLength: 32
+                    required:
+                    - number
+              required:
+              - title
+              - rooms
+            teachers:
+              type: array
+              items:
+                type: object
+                properties:
+                  full_name:
+                    type: string
+                    maxLength: 64
+                required:
+                - full_name
+          required:
+          - title
+          - group
+          - type
+          - place
+          - teachers
+        datetime:
+          type: string
+          format: date-time
+      required:
+      - lesson
+      - datetime
+    UserPreference:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        slug:
+          type: string
+        enabled:
+          type: boolean
+        value:
+          type: integer
+          maximum: 32767
+          nullable: true
+          minimum: 0
+        max_value:
+          type: integer
+      required:
+      - slug
+      - enabled
+      - max_value
+    File:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        data:
+          type: string
+          format: binary
+      required:
+      - data
+    ScheduledLessonNoteRead:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        scheduled_lesson:
+          type: string
+          nullable: true
+        text:
+          type: string
+          maxLength: 4096
+        files:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                readOnly: true
+              created_at:
+                type: string
+                format: date-time
+                readOnly: true
+              data:
+                type: string
+                format: binary
+            required:
+            - data
+        created_by:
+          type: string
+      required:
+      - text
+      - created_by
+    ScheduledLessonNotification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        scheduled_lesson:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              readOnly: true
+            lesson:
+              type: object
+              properties:
+                title:
+                  type: string
+                  maxLength: 128
+                group:
+                  type: string
+                type:
+                  type: string
+                place:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      maxLength: 128
+                    link:
+                      type: string
+                      nullable: true
+                      maxLength: 128
+                    rooms:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          number:
+                            type: string
+                            maxLength: 32
+                        required:
+                        - number
+                  required:
+                  - title
+                  - rooms
+                teachers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      full_name:
+                        type: string
+                        maxLength: 64
+                    required:
+                    - full_name
+              required:
+              - title
+              - group
+              - type
+              - place
+              - teachers
+            datetime:
+              type: string
+              format: date-time
+          required:
+          - lesson
+          - datetime
+        telegram_user:
+          type: string
+        notify_at:
+          type: string
+          format: date-time
+      required:
+      - scheduled_lesson
+      - telegram_user
+      - notify_at
+    ScheduledLessonNoteWrite:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        scheduled_lesson:
+          type: string
+          nullable: true
+        text:
+          type: string
+          maxLength: 4096
+        files:
+          type: array
+          items:
+            type: string
+        created_by:
+          type: string
+      required:
+      - text
+      - created_by

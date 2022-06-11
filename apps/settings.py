@@ -189,3 +189,5 @@ FIELD_ENCRYPTION_KEY = os.environ.get('FIELD_ENCRYPTION_KEY', '')
 E_MOSPOLYTECH_ENDPOINT = os.getenv('MOSPOLYTECH_ACCOUNT_ENDPOINT', 'https://e.mospolytech.ru')
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
+
+TELEGRAM_BOT_LINK = os.getenv('TELEGRAM_BOT_LINK', 'https://t.me/MosPolyScheduleBot')

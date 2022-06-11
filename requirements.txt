@@ -9,3 +9,5 @@ psycopg2==2.9.3
 django-encrypted-model-fields==0.6.1
 ics~=0.7
 pytelegrambotapi==4.4.0
+PyYAML==6.0
+uritemplate==4.1.1
