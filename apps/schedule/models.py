@@ -119,7 +119,7 @@ class ScheduledLessonNotification(BaseModel):
 
     class Meta:
         verbose_name = 'Уведомление о начале занятия'
-        verbose_name_plural = 'Уведомления о начале занятия'
+        verbose_name_plural = 'Уведомления о начале занятий'
 
     def __str__(self):
         return str(self.scheduled_lesson)
