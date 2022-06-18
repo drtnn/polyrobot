@@ -151,8 +151,6 @@ def save_schedule(group: Group, schedule: Union[Dict, List]) -> bool:
         ScheduledLesson.objects.filter(lesson__group=group).exclude(id__in=scheduled_lesson_ids).delete()
         Lesson.objects.filter(scheduledlesson__isnull=True).delete()
         LessonPlace.objects.filter(lesson__isnull=True).delete()
-        LessonType.objects.filter(lesson__isnull=True).delete()
-        LessonTeacher.objects.filter(lessons__isnull=True).delete()
         LessonRoom.objects.filter(lessons__isnull=True).delete()
 
         return bool(new_scheduled_lessons_created)
