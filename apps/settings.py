@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'apps.schedule',
     'apps.s3',
     'apps.preference',
+    'apps.text_filter',
 ]
 
 MIDDLEWARE = [

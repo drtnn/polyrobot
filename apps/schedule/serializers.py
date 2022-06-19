@@ -1,9 +1,11 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from apps.s3.models import File
 from apps.s3.serializers import FileSerializer
 from .models import Lesson, ScheduledLesson, LessonPlace, LessonRoom, LessonTeacher, LessonType, ScheduledLessonNote, \
     ScheduledLessonNotification
+from ..text_filter.utils import check_text_for_bad_words
 
 
 class LessonRoomSerializer(serializers.ModelSerializer):
@@ -65,6 +67,11 @@ class ScheduledLessonNoteWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScheduledLessonNote
         fields = ['id', 'scheduled_lesson', 'text', 'files', 'created_by']
+
+    def validate_text(self, value):
+        if check_text_for_bad_words(text=value):
+            raise ValidationError({"error": "text has bad words"})
+        return value
 
 
 class ScheduledLessonNotificationSerializer(serializers.ModelSerializer):
