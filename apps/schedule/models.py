@@ -18,7 +18,8 @@ class LessonRoom(BaseModel):
 
 class LessonPlace(BaseModel):
     title = models.CharField(verbose_name='Lesson Place Title', max_length=128)
-    rooms = models.ManyToManyField('schedule.LessonRoom', verbose_name='Lesson Rooms', related_name='lessons')
+    rooms = models.ManyToManyField('schedule.LessonRoom', verbose_name='Lesson Rooms', related_name='lessons',
+                                   blank=True)
     link = models.CharField(verbose_name='Lesson Place Link', max_length=128, null=True, blank=True)
 
     class Meta:
@@ -94,7 +95,8 @@ class ScheduledLessonNote(BaseModel):
     scheduled_lesson = models.ForeignKey('schedule.ScheduledLesson', verbose_name='Scheduled Lesson',
                                          related_name='notes', on_delete=models.SET_NULL, blank=True, null=True)
     text = models.TextField(verbose_name='Lesson Note Text', max_length=4096)
-    files = models.ManyToManyField('s3.File', verbose_name='Lesson Note Files', related_name='scheduled_lesson_notes')
+    files = models.ManyToManyField('s3.File', verbose_name='Lesson Note Files', related_name='scheduled_lesson_notes',
+                                   blank=True)
     created_by = models.ForeignKey('telegram.TelegramUser', verbose_name='Created by', on_delete=models.CASCADE,
                                    related_name='created_notes')
 
